@@ -35,8 +35,8 @@ SELECT v.dtCompra as Data, (iv.quantidade * p.valor) as Total FROM Venda v, Iten
 
 SELECT c.nomeCliente FROM Cliente c, Venda v WHERE c.idCliente = v.idCliente and EXTRACT(MONTH FROM v.dtCompra) = '11';
 
-SELECT c.idCliente, (iv.quantidade * p.valor) as Total 
-FROM Venda v, ItensVenda iv, Produto p , Cliente c
+SELECT c.idCliente, SUM(iv.quantidade * p.valor) as Total 
+FROM Cliente c
 WHERE p.idProduto = iv.idProduto and v.idVenda = iv.idVenda and c.idCliente = v.idCliente 
 GROUP BY c.idCliente
 ORDER BY Total;
