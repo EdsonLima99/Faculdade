@@ -160,11 +160,6 @@ alter table Alunos drop column Estado;
 
 02) Crie a estrutura necessária para armazenar os Departamentos dos Professores, 
 respeitando as regras formais, e em seguida, insira e relacione os dados na nova estrutura e exclua a estrutura antiga.
-insert into professores (nomeProfessor, departamento) values ('VANDERSON SAM', 'INFORMATICA');
-insert into professores (nomeProfessor, departamento) values ('TEDESCO FROSSARD', 'INFORMATICA');
-insert into professores (nomeProfessor, departamento) values ('THIAGO SAQUE', 'ADMINISTRACAO');
-insert into professores (nomeProfessor, departamento) values ('JULIO NARDOVISK', 'BASICO');
-insert into professores (nomeProfessor, departamento) values ('LUANITA', 'ADMINISTRACAO');
 
 create table Departamentos(
 	idDepartamento serial primary key,
@@ -264,16 +259,126 @@ where a.idaluno not in(
 13) Crie um comando que retorne em uma única lista o nome do aluno e o nome do professor, 
 adicione uma coluna com nome de tipo, informando se é aluno ou professor.
 
-
+select a.nomealuno as nome, 'aluno' as tipo 
+from alunos a
+union
+select p.nomeprofessor as nome, 'professor' as tipo
+from professores p;
 
 14) Quais disciplinas foram iniciadas no mês de julho de 2021?
+
+select distinct d.nomedisciplina
+from disciplinas d, cursa c
+where d.iddisciplina = c.iddisciplina and
+extract(month from dtinicio) = 7;
+
 15) Quais disciplinas não tem nenhum aluno cursando?
+
+select d.nomedisciplina
+from disciplinas d
+where d.iddisciplina not in(
+	select c.iddisciplina
+	from cursa c
+)
+
 16) Qual a carga horária de disciplinas ofertada por mês, curso.
-17) Emita um histórico completo do aluno, com todas as disciplinas cursadas, o nome do aluno, a nota, o curso, o professor, o tipo de disciplina, para cada disciplina cursada, insira uma coluna que exiba a mensagem de aprovado (nota >= 6) ou reprovado.
-18) Emita um relatório informando quais alunos já cursaram toda a carga horária de todos os tipos de disciplina.
-19) Emita um relatório de todas as disciplinas por curso, com carga horária, nome da disciplina e tipo.
-20) Emita um relatório das disciplinas que cada professor ministra, com nome da disciplina, tipo, carga horária e nome do curso.
-21) Emita um relatório com o número de alunos matriculados nas disciplinas por departamento.
-22) Emita um relatório agrupado por semestre contendo, o numero de alunos, o número de disciplinas, o numero de professores e a média de notas.
-23) Emita um relatório contendo as disciplinas que cada aluno falta cursar do seu curso, contendo o nome da disciplina, a carga horária e o tipo.
+
+select d.cargahoraria, 
+extract(month from c.dtinicio) as mes, 
+cu.nomecurso
+from cursos cu
+left join disciplinas d on cu.idcurso = d.idcurso
+left join cursa c on d.iddisciplina = c.iddisciplina
+group by 2, 3, 1;
+
+17) Emita um histórico completo do aluno, com todas as disciplinas cursadas, 
+o nome do aluno, a nota, o curso, o professor, o tipo de disciplina, 
+para cada disciplina cursada, 
+insira uma coluna que exiba a mensagem de aprovado (nota >= 6) ou reprovado.
+
+select a.nomealuno, c.nota, cu.nomecurso, d.nomedisciplina, p.nomeprofessor,
+td.tipo, 
+case when c.nota >= 60 then 'Aprovado'
+	else 'Reprovado'
+end as situacao
+from cursos cu
+left join alunos a on cu.idcurso= a.idcurso
+left join professores p on a.idorientador = p.idprofessor
+left join disciplinas d on p.idprofessor = d.idprofessor
+left join cursa c on d.iddisciplina = c.iddisciplina
+left join tipodisciplinas td on d.idtipodisciplina = td.idtipodisciplina
+order by a.nomealuno;
+
+18) Emita um relatório informando quais alunos já cursaram toda a carga horária de 
+todos os tipos de disciplina.
+
+select distinct a.nomealuno
+from alunos a, cursos cu, cargahoraria ch, disciplinas d,
+cursa c
+where a.idcurso = cu.idcurso and
+cu.idcurso = ch.idcurso and
+a.idaluno = c.idaluno and
+c.iddisciplina = d.iddisciplina and
+ch.cargahoraria = d.cargahoraria;
+
+19) Emita um relatório de todas as disciplinas por curso, com carga horária, 
+nome da disciplina e tipo.
+
+select d.nomedisciplina, cu.nomecurso, td.tipo, d.cargahoraria
+from disciplinas d, cursos cu, tipodisciplinas td
+where cu.idcurso = d.idcurso and
+d.idtipodisciplina = td.idtipodisciplina
+order by cu.nomecurso;
+
+20) Emita um relatório das disciplinas que cada professor ministra, 
+com nome da disciplina, tipo, carga horária e nome do curso.
+
+select p.nomeprofessor, d.nomedisciplina, td.tipo, ch.cargahoraria, cu.nomecurso 
+from professores p, disciplinas d, tipodisciplinas td, cargahoraria ch, cursos cu
+where p.idprofessor = d.idprofessor and
+d.idtipodisciplina = td.idtipodisciplina and
+td.idtipodisciplina = ch.idtipodisciplina and
+ch.idcurso = cu.idcurso;
+
+21) Emita um relatório com o número de alunos matriculados nas disciplinas 
+por departamento.
+
+select d.nomedisciplina, de.departamento, count(a.*) as totalalunos
+from alunos a
+right join professores p on a.idorientador = p.idprofessor
+right join departamentos de on p.iddepartamento = de.iddepartamento
+right join disciplinas d on p.idprofessor = d.idprofessor
+group by de.departamento, d.nomedisciplina
+order by de.departamento;
+
+22) Emita um relatório agrupado por semestre contendo, o numero de alunos, 
+o número de disciplinas, o numero de professores e a média de notas.
+
+select c.semestre, count(a.*) as totalaluno, count(d.*) as totaldisciplina,
+count(p.*) as totalprofessor, avg(c.nota)
+from alunos a, cursa c, disciplinas d, professores p
+where a.idaluno = c.idaluno and
+c.iddisciplina = d.iddisciplina and
+d.idprofessor = p.idprofessor and
+p.idprofessor = a.idorientador
+group by c.semestre;
+
+23) Emita um relatório contendo as disciplinas que cada aluno falta cursar do seu curso, 
+contendo o nome da disciplina, a carga horária e o tipo.
+
+select a.nomealuno, d.nomedisciplina, ch.cargahoraria, td.tipo
+from alunos a, cursa c, disciplinas d, tipodisciplinas td, cargahoraria ch
+where a.idaluno = c.idaluno and
+c.iddisciplina = d.iddisciplina and
+d.idtipodisciplina = td.idtipodisciplina and
+td.idtipodisciplina = ch.idtipodisciplina and
+d.cargahoraria > ch.cargahoraria;
+
 24) Qual a carga horária total cursada por aluno e tipo de disciplina.
+
+select a.nomealuno, td.tipo, ch.cargahoraria
+from alunos a, cursos cu, cargahoraria ch, tipodisciplinas td
+where a.idcurso = cu.idcurso and
+cu.idcurso = ch.idcurso and
+ch.idtipodisciplina = td.idtipodisciplina;
+
