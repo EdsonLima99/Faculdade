@@ -33,7 +33,7 @@ Lista *criarLista()
     e - novo elemento a ser inserido
     *lista - endere�o de uma lista encadeada.
 */
-void inserirInicio(Elemento *e, Lista *lista)
+void inserirFim(Elemento *e, Lista *lista)
 {
     No *no = malloc(sizeof(No));
     no->elemento = e;
@@ -81,11 +81,11 @@ int funcaoEspalhamento(int valor)
 }
 
 // Cria��o do elemento e inser��o na tabela
-void inserTabela()
+void inserirTabela()
 {
     Elemento *elem = criarElemento();
     int indice = funcaoEspalhamento(elem->valor);
-    inserirInicio(elem, tabela[indice]);
+    inserirFim(elem, tabela[indice]);
 }
 
 // Fun��o de buscar elementos na tabela
@@ -184,7 +184,7 @@ int main()
             printf("Fim...\n");
             break;
         case 1:
-            inserTabela();
+            inserirTabela();
             break;
         case 2:
             printf("Qual o elemento a ser buscado? ");
