@@ -3,7 +3,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package interfaces;
+
 import gerenciador.GerenciadorInterfaceGrafica;
+
 /**
  *
  * @author CONEXOS
@@ -11,6 +13,7 @@ import gerenciador.GerenciadorInterfaceGrafica;
 public class FramePrincipal extends javax.swing.JFrame {
 
     private GerenciadorInterfaceGrafica gerenciadoInterfaceGrafica;
+
     /**
      * Creates new form FramePrincipal
      */

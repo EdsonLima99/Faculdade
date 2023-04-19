@@ -11,8 +11,9 @@ import gerenciador.GerenciadorInterfaceGrafica;
  * @author CONEXOS
  */
 public class ClientesPorBairro extends javax.swing.JDialog {
-    
+
     private GerenciadorInterfaceGrafica gerenciadoInterfaceGrafica;
+
     /**
      * Creates new form ClientesPorData
      */

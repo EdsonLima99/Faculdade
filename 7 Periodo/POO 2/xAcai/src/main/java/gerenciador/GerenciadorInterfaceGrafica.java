@@ -4,16 +4,20 @@
  */
 package gerenciador;
 
+import dominio.GerenciadorDominio;
 import interfaces.CadastroAcai;
 import interfaces.CadastroCliente;
 import interfaces.CadastroPedidos;
 import interfaces.ClientesPorBairro;
 import interfaces.ClientesPorNome;
 import interfaces.FramePrincipal;
+import interfaces.PesquisarAcai;
 import java.awt.Frame;
 import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import modelo.Acai;
 
 /**
  *
@@ -21,14 +25,35 @@ import javax.swing.JOptionPane;
  */
 public class GerenciadorInterfaceGrafica {
 
-    private FramePrincipal framePrincipal = null;
-    private CadastroCliente cadastroCliente = null;
-    private CadastroAcai cadastroAcai = null;
-    private CadastroPedidos cadastroPedidos = null;
-    private ClientesPorNome clientesPorNome = null;
-    private ClientesPorBairro clientesPorBairro = null;
+    private FramePrincipal framePrincipal;
+    private CadastroCliente cadastroCliente;
+    private CadastroAcai cadastroAcai;
+    private CadastroPedidos cadastroPedidos;
+    private ClientesPorNome clientesPorNome;
+    private ClientesPorBairro clientesPorBairro;
+    private PesquisarAcai pesquisarAcai;
+
+    GerenciadorDominio gerenciadorDominio;
 
     public GerenciadorInterfaceGrafica() {
+        framePrincipal = null;
+        cadastroCliente = null;
+        cadastroAcai = null;
+        cadastroPedidos = null;
+        clientesPorNome = null;
+        clientesPorBairro = null;
+        pesquisarAcai = null;
+
+        try {
+            gerenciadorDominio = new GerenciadorDominio();
+        } catch (ClassNotFoundException | SQLException ex) {
+            JOptionPane.showMessageDialog(framePrincipal, ex);
+            System.exit(1);
+        }
+    }
+
+    public GerenciadorDominio getGerenciadorDominio() {
+        return gerenciadorDominio;
     }
 
     // ABRIR JDIALOG
@@ -70,6 +95,23 @@ public class GerenciadorInterfaceGrafica {
     public void abrirJanelaConsultaClienteData() {
         abrirJanela(framePrincipal, clientesPorBairro, ClientesPorBairro.class);
     }
+    
+    public Acai abrirJanelaPesquisarAcai() {
+        pesquisarAcai = (PesquisarAcai) abrirJanela(framePrincipal, pesquisarAcai, PesquisarAcai.class);
+        return pesquisarAcai.getAcaiSelecionado();
+    }
+
+//
+//    public void carregarComboTamanho(JComboBox combo) {
+//        List<Tamanho> lista;
+//        try {
+//            lista = gerenciadorDominio.listarTamanho();
+//            combo.setModel(new DefaultComboBoxModel(lista.toArray()));
+//        } catch (ClassNotFoundException | SQLException ex) {
+//            JOptionPane.showMessageDialog(framePrincipal, "Erro ao carregar tamanho. " + ex);
+//        }
+//    }
+
     /**
      * @param args the command line arguments
      */

@@ -9,6 +9,12 @@ import gerenciador.GerenciadorInterfaceGrafica;
 import java.awt.Color;
 import java.awt.Image;
 import java.io.File;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -20,8 +26,9 @@ import javax.swing.table.DefaultTableModel;
  * @author CONEXOS
  */
 public class CadastroCliente extends javax.swing.JDialog {
-    
+
     private GerenciadorInterfaceGrafica gerenciadoInterfaceGrafica;
+
     /**
      * Creates new form Açai
      */
@@ -371,7 +378,7 @@ public class CadastroCliente extends javax.swing.JDialog {
         String dtNascimento = txtData.getText();
         String cep = txtCep.getText();
         String endereco = txtEndereço.getText();
-        String numero = txtNumero.getText();
+        int numero = Integer.parseInt(txtNumero.getText());
         String bairro = txtBairro.getText();
         String referencia = txtReferencia.getText();
         String cidade = txtCidade.getText();
@@ -379,11 +386,22 @@ public class CadastroCliente extends javax.swing.JDialog {
         String celular = txtCelular.getText();
         String email = txtEmail.getText();
         char sexo = (char) grpSexo.getSelection().getMnemonic();
+        Icon foto = lblFoto.getIcon();
 
         if (validarCampos()) {
-            //INSERIR
-            inserirTabela(nome, dtNascimento, endereco, numero, bairro, cidade, celular, sexo);
-            //inserir no banco
+            //INSERIR no banco
+            Date dataNascimento;
+            try {
+                dataNascimento = FuncoesUteis.strToDate(dtNascimento);
+                int id = gerenciadoInterfaceGrafica.getGerenciadorDominio().inserirCliente(nome, cpf, dataNascimento, cep, endereco,
+                        numero, bairro, referencia, cidade, telefone, celular, email, sexo, foto);
+
+                JOptionPane.showMessageDialog(this, "Cliente " + id + " inserido com sucesso!");
+            } catch (ParseException ex) {
+                JOptionPane.showMessageDialog(this, "Erro na conversão da data.");
+            } catch (ClassNotFoundException | SQLException ex) {
+                JOptionPane.showMessageDialog(this, "Erro ao inserir cliente.");
+            }
         }
     }//GEN-LAST:event_btnNovoActionPerformed
 
@@ -444,7 +462,7 @@ public class CadastroCliente extends javax.swing.JDialog {
             lblCep.setForeground(Color.red);
         }
 
-        if (FuncoesUteis.isCPF(txtCpf.getText()) == false) {;
+        if (FuncoesUteis.isCPF(txtCpf.getText()) == false) {
             msgErro = msgErro + "CPF inválido.\n";
             lblCpf.setForeground(Color.red);
         }

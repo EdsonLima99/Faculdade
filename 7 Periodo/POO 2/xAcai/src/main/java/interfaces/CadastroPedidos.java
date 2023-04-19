@@ -14,8 +14,9 @@ import javax.swing.table.DefaultTableModel;
  * @author CONEXOS
  */
 public class CadastroPedidos extends javax.swing.JDialog {
-    
+
     private GerenciadorInterfaceGrafica gerenciadoInterfaceGrafica;
+
     /**
      * Creates new form CadastroAcai
      */

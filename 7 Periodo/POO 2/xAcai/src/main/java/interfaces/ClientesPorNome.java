@@ -6,7 +6,6 @@ import gerenciador.GerenciadorInterfaceGrafica;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
  */
-
 /**
  *
  * @author CONEXOS
@@ -14,6 +13,7 @@ import gerenciador.GerenciadorInterfaceGrafica;
 public class ClientesPorNome extends javax.swing.JDialog {
 
     private GerenciadorInterfaceGrafica gerenciadoInterfaceGrafica;
+
     /**
      * Creates new form ClientesPorNome
      */
