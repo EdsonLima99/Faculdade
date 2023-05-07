@@ -2,6 +2,7 @@ package interfaces;
 
 import gerenciador.GerenciadorInterfaceGrafica;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -188,7 +189,7 @@ public class PesquisarCliente extends javax.swing.JDialog {
             for (Acai acai : lista) {
                 ((DefaultTableModel) tblAcai.getModel()).addRow(acai.toArray());
             }
-        } catch (ClassNotFoundException | SQLException ex) {
+        } catch (ClassNotFoundException | SQLException | ParseException ex) {
             JOptionPane.showMessageDialog(this, "Erro ao pesquisar açaí. " + ex);
         }
     }//GEN-LAST:event_btnPesquisarActionPerformed
@@ -206,7 +207,7 @@ public class PesquisarCliente extends javax.swing.JDialog {
             } else {
                 JOptionPane.showMessageDialog(this, "Selecione um açaí.");
             }
-        } catch (ClassNotFoundException | SQLException ex) {
+        } catch (ClassNotFoundException | SQLException  ex) {
             JOptionPane.showMessageDialog(this, "Erro ao excluir açaí. " + ex);
         }
 

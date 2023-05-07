@@ -2,7 +2,10 @@ package interfaces;
 
 import gerenciador.GerenciadorInterfaceGrafica;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import modelo.Acai;
@@ -179,7 +182,7 @@ public class PesquisarAcai extends javax.swing.JDialog {
             for (Acai acai : lista) {
                 ((DefaultTableModel) tblAcai.getModel()).addRow(acai.toArray());
             }
-        } catch (ClassNotFoundException | SQLException ex) {
+        } catch (ClassNotFoundException | SQLException | ParseException ex) {
             JOptionPane.showMessageDialog(this, "Erro ao pesquisar açaí. " + ex);
         }
     }//GEN-LAST:event_btnPesquisarActionPerformed

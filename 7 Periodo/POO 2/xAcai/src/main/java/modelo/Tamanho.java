@@ -18,21 +18,22 @@ import javax.persistence.Table;
  * @author CONEXOS
  */
 @Entity
-@Table(name = "Acai", schema = "public")
-public class Acai implements Serializable {
+@Table(name = "Tamanho", schema = "public")
+public class Tamanho implements Serializable {
 
     @Id
+    @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "nome", nullable = false)
-    private String nome;
-    
-    public Acai() {
+    @Column(name = "tamanho", nullable = false)
+    private String tamanho;
+
+    public Tamanho() {
     }
 
-    public Acai(String nome) {
-        this.nome = nome;
+    public Tamanho(String tamanho) {
+        this.tamanho = tamanho;
     }
 
     public int getId() {
@@ -43,17 +44,17 @@ public class Acai implements Serializable {
         this.id = id;
     }
 
-    public String getNome() {
-        return nome;
+    public String getTamanho() {
+        return tamanho;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setTamanho(String tamanho) {
+        this.tamanho = tamanho;
     }
 
     @Override
     public String toString() {
-        return nome;
+        return tamanho;
     }
 
     public Object[] toArray() throws ParseException {

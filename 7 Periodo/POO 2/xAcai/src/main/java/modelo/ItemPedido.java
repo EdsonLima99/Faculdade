@@ -4,27 +4,55 @@
  */
 package modelo;
 
+import java.io.Serializable;
+import java.text.ParseException;
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
 /**
  *
  * @author CONEXOS
  */
-public class ItemPedido {
-    private Pedido pedido;
-    private Acai acai;
+@Entity
+@Table(name = "ItemPedido", schema = "public")
+public class ItemPedido implements Serializable {
+
+    @EmbeddedId
+    private ItemPedidoPK itemPedidoPK;
+    
+    @Column(name = "tamanho", nullable = false)
     private int tamanho;
+    
+    @Column(name = "morango", nullable = false)
     private int morango;
+    
+    @Column(name = "banana", nullable = false)
     private int banana;
+    
+    @Column(name = "cereja", nullable = false)
     private int cereja;
+    
+    @Column(name = "leiteCondensado", nullable = false)
     private int leiteCondensado;
+    
+    @Column(name = "coberturaMorango", nullable = false)
     private int coberturaMorango;
+    
+    @Column(name = "coberturaChocolate", nullable = false)
     private int coberturaChocolate;
+    
+    @Column(name = "leitePo", nullable = false)
     private int leitePo;
+    
+    @Column(name = "pacoca", nullable = false)
     private int pacoca;
+    
+    @Column(name = "chocoball", nullable = false)
     private int chocoball;
 
-    public ItemPedido(Pedido pedido, Acai acai, int tamanho, int morango, int banana, int cereja, int leiteCondensado, int coberturaMorango, int coberturaChocolate, int leitePo, int pacoca, int chocoball) {
-        this.pedido = pedido;
-        this.acai = acai;
+    public ItemPedido(int tamanho, int morango, int banana, int cereja, int leiteCondensado, int coberturaMorango, int coberturaChocolate, int leitePo, int pacoca, int chocoball, Pedido pedido, TamanhoAcai tamanhoAcai) {
         this.tamanho = tamanho;
         this.morango = morango;
         this.banana = banana;
@@ -35,22 +63,24 @@ public class ItemPedido {
         this.leitePo = leitePo;
         this.pacoca = pacoca;
         this.chocoball = chocoball;
+        this.itemPedidoPK.setPedido(pedido);
+        this.itemPedidoPK.setTamanhoAcai(tamanhoAcai);
     }
 
     public Pedido getPedido() {
-        return pedido;
+        return itemPedidoPK.getPedido();
     }
 
     public void setPedido(Pedido pedido) {
-        this.pedido = pedido;
+        this.itemPedidoPK.setPedido(pedido);
     }
 
-    public Acai getAcai() {
-        return acai;
+    public TamanhoAcai getTamanhoAcai() {
+        return itemPedidoPK.getTamanhoAcai();
     }
 
-    public void setAcai(Acai acai) {
-        this.acai = acai;
+    public void setAcai(TamanhoAcai tamanhoAcai) {
+        this.itemPedidoPK.setTamanhoAcai(tamanhoAcai);
     }
 
     public int getTamanho() {
@@ -132,6 +162,12 @@ public class ItemPedido {
     public void setChocoball(int chocoball) {
         this.chocoball = chocoball;
     }
-    
-    
+
+//    @Override
+//    public String toString() {
+//        return nome;
+//    }
+    public Object[] toArray() throws ParseException {
+        return new Object[]{this};
+    }
 }

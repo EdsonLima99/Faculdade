@@ -4,24 +4,58 @@
  */
 package modelo;
 
+import java.io.Serializable;
+import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  *
  * @author CONEXOS
  */
-public class Pedido {
+@Entity
+@Table(name = "Pedido", schema = "public")
+public class Pedido implements Serializable {
+
+    @Id
+    @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private Cliente cliente;
+
+    @Column(name = "data", nullable = false)
+    @Temporal(TemporalType.DATE)
     private Date data;
+
+    @Column(name = "entrega", nullable = false)
     private char entrega;
+
+    @Column(name = "valorTotal", nullable = false)
     private float valorTotal;
 
-    public Pedido(Cliente cliente, Date data, char entrega, float valorTotal) {
-        this.cliente = cliente;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "idCliente", nullable = false)
+    private Cliente cliente;
+
+    @OneToMany(mappedBy = "itemPedidoPK.pedido")
+    private List<ItemPedido> itemPedido;
+
+    public Pedido(Date data, char entrega, float valorTotal, Cliente cliente) {
         this.data = data;
         this.entrega = entrega;
         this.valorTotal = valorTotal;
+        this.cliente = cliente;
     }
 
     public int getId() {
@@ -63,6 +97,16 @@ public class Pedido {
     public void setValorTotal(float valorTotal) {
         this.valorTotal = valorTotal;
     }
-    
-    
+
+    public List<ItemPedido> getItemPedido() {
+        return itemPedido;
+    }
+
+    public void setItemPedido(List<ItemPedido> itemPedido) {
+        this.itemPedido = itemPedido;
+    }
+
+    public Object[] toArray() throws ParseException {
+        return new Object[]{this};
+    }
 }

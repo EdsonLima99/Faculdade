@@ -198,17 +198,16 @@ public class CadastroAcai extends javax.swing.JDialog {
     private void btnInserirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInserirActionPerformed
         // TODO add your handling code here:
         String nome = txtNome.getText();
-        float valor = 10;
 
         if (validarCampos()) {
             try {
                 //INSERIR no banco
                 if (((JButton) evt.getSource()).getMnemonic() == 'I') {
-                    int id = gerenciadoInterfaceGrafica.getGerenciadorDominio().inserirAcai(nome, valor);
+                    int id = gerenciadoInterfaceGrafica.getGerenciadorDominio().inserirAcai(nome);
 
                     JOptionPane.showMessageDialog(this, "Açaí " + id + " inserido com sucesso!");
                 } else {
-                    gerenciadoInterfaceGrafica.getGerenciadorDominio().alterarAcai(acaiSelecionado.getId(), nome, valor);
+                    gerenciadoInterfaceGrafica.getGerenciadorDominio().alterarAcai(acaiSelecionado.getId(), nome);
 
                     JOptionPane.showMessageDialog(this, "Açaí " + acaiSelecionado.getId() + " alterado com sucesso!");
                 }
