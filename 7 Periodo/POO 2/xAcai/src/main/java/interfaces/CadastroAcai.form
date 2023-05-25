@@ -8,6 +8,9 @@
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
     <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
   </SyntheticProperties>
+  <Events>
+    <EventHandler event="componentShown" listener="java.awt.event.ComponentListener" parameters="java.awt.event.ComponentEvent" handler="formComponentShown"/>
+  </Events>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
@@ -61,13 +64,21 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
+              <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="lblNome" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Component id="lblTamanho" alignment="0" max="32767" attributes="0"/>
+                      <Component id="lblValor" alignment="0" max="32767" attributes="0"/>
+                      <Component id="lblNome" alignment="0" max="32767" attributes="0"/>
+                  </Group>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="txtNome" min="-2" pref="207" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Component id="txtValor" alignment="0" max="32767" attributes="0"/>
+                      <Component id="cmbTamanho" alignment="0" pref="196" max="32767" attributes="0"/>
+                      <Component id="txtNome" pref="196" max="32767" attributes="0"/>
+                  </Group>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jButton4" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnPesquisar" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
@@ -79,9 +90,19 @@
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="lblNome" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="txtNome" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="jButton4" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="btnPesquisar" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace pref="8" max="32767" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="lblTamanho" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="cmbTamanho" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="lblValor" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="txtValor" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -94,13 +115,35 @@
         </Component>
         <Component class="javax.swing.JTextField" name="txtNome">
         </Component>
-        <Component class="javax.swing.JButton" name="jButton4">
+        <Component class="javax.swing.JButton" name="btnPesquisar">
           <Properties>
             <Property name="text" type="java.lang.String" value="Pesquisar"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton4ActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnPesquisarActionPerformed"/>
           </Events>
+        </Component>
+        <Component class="javax.swing.JLabel" name="lblValor">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Valor"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="txtValor">
+        </Component>
+        <Component class="javax.swing.JLabel" name="lblTamanho">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Tamanho"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JComboBox" name="cmbTamanho">
+          <Properties>
+            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+              <StringArray count="0"/>
+            </Property>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+          </AuxValues>
         </Component>
       </SubComponents>
     </Container>
@@ -108,7 +151,7 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="Lista de Clientes"/>
+            <TitledBorder title="Lista de A&#xe7;ai"/>
           </Border>
         </Property>
       </Properties>
@@ -130,12 +173,24 @@
             <Component class="javax.swing.JTable" name="tblAcai">
               <Properties>
                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                  <Table columnCount="1" rowCount="0">
+                  <Table columnCount="3" rowCount="0">
                     <Column editable="false" title="Nome" type="java.lang.Object"/>
+                    <Column editable="false" title="Tamanho" type="java.lang.Object"/>
+                    <Column editable="false" title="Valor" type="java.lang.Object"/>
                   </Table>
                 </Property>
                 <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
                   <TableColumnModel selectionModel="0">
+                    <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                      <Title/>
+                      <Editor/>
+                      <Renderer/>
+                    </Column>
+                    <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                      <Title/>
+                      <Editor/>
+                      <Renderer/>
+                    </Column>
                     <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
                       <Title/>
                       <Editor/>
@@ -161,8 +216,6 @@
                   <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
                   <Component id="btnInserir" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
-                  <Component id="btnAlterar" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
                   <Component id="btnCancelar" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
               </Group>
@@ -175,7 +228,6 @@
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="btnInserir" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="btnCancelar" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="btnAlterar" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace pref="48" max="32767" attributes="0"/>
               </Group>
@@ -194,16 +246,6 @@
         <Component class="javax.swing.JButton" name="btnInserir">
           <Properties>
             <Property name="mnemonic" type="int" value="73"/>
-            <Property name="text" type="java.lang.String" value="Inserir"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnInserirActionPerformed"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JButton" name="btnAlterar">
-          <Properties>
-            <Property name="mnemonic" type="int" value="65"/>
-            <Property name="text" type="java.lang.String" value="Alterar"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnInserirActionPerformed"/>

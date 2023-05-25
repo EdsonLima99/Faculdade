@@ -40,21 +40,23 @@ made subject to such option by the copyright holder.
 Contributor(s):
 -->
 <hibernate-configuration>
-  <session-factory>
-    <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
-    <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
-    <property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/xAcai</property>
-    <property name="hibernate.connection.username">postgres</property>
-    <property name="hibernate.connection.password">1</property>
-    <property name="hibernate.hbm2ddl.auto">create</property>
-    <property name="hibernate.show_sql">true</property>
-    <property name="hibernate.format_sql">true</property>
-    <property name="hibernate.query.factory_class">org.hibernate.hql.internal.classic.ClassicQueryTranslatorFactory</property>
-    <mapping class="modelo.Acai"></mapping>
-    <mapping class="modelo.Tamanho"></mapping>
-    <mapping class="modelo.Cliente"></mapping>
-    <mapping class="modelo.Pedido"></mapping>
-    <mapping class="modelo.TamanhoAcai"></mapping>
-    <mapping class="modelo.ItemPedido"></mapping>
-  </session-factory>
+    <session-factory>
+        <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+        <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
+        <property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/xAcai</property>
+        <property name="hibernate.connection.username">postgres</property>
+        <property name="hibernate.connection.password">1</property>
+        <property name="hibernate.hbm2ddl.auto">update</property>
+        <property name="hibernate.hbm2ddl.import_files">dados_iniciais.sql</property>
+        <property name="hibernate.hbm2ddl.import_files_sql_extractor">org.hibernate.tool.hbm2ddl.MultipleLinesSqlCommandExtractor</property>
+        <property name="hibernate.show_sql">true</property>
+        <property name="hibernate.format_sql">true</property>
+        <property name="hibernate.query.factory_class">org.hibernate.hql.internal.classic.ClassicQueryTranslatorFactory</property>
+        <mapping class="modelo.Acai"></mapping>
+        <mapping class="modelo.Tamanho"></mapping>
+        <mapping class="modelo.Cliente"></mapping>
+        <mapping class="modelo.Pedido"></mapping>
+        <mapping class="modelo.TamanhoAcai"></mapping>
+        <mapping class="modelo.ItemPedido"></mapping>
+    </session-factory>
 </hibernate-configuration>

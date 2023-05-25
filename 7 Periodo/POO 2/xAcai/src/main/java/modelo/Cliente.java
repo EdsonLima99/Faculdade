@@ -16,8 +16,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-
-
 /**
  *
  * @author CONEXOS
@@ -33,6 +31,9 @@ public class Cliente implements Serializable {
 
     @Column(name = "nome", nullable = false)
     private String nome;
+
+    @Column(name = "sexo", nullable = false)
+    private char sexo;
 
     @Column(name = "endereco", nullable = false)
     private String endereco;
@@ -52,8 +53,12 @@ public class Cliente implements Serializable {
     @OneToMany(mappedBy = "cliente", fetch = FetchType.LAZY)
     private List<Pedido> pedido;
 
-    public Cliente(String nome, String endereco, int numero, String bairro, String cidade, String celular) {
+    public Cliente() {
+    }
+
+    public Cliente(String nome, char sexo, String endereco, int numero, String bairro, String cidade, String celular) {
         this.nome = nome;
+        this.sexo = sexo;
         this.endereco = endereco;
         this.numero = numero;
         this.bairro = bairro;
@@ -75,6 +80,14 @@ public class Cliente implements Serializable {
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public char getSexo() {
+        return sexo;
+    }
+
+    public void setSexo(char sexo) {
+        this.sexo = sexo;
     }
 
     public String getEndereco() {
@@ -117,12 +130,20 @@ public class Cliente implements Serializable {
         this.celular = celular;
     }
 
+    public List<Pedido> getPedido() {
+        return pedido;
+    }
+
+    public void setPedido(List<Pedido> pedido) {
+        this.pedido = pedido;
+    }
+
     @Override
     public String toString() {
         return nome;
     }
 
     public Object[] toArray() throws ParseException {
-        return new Object[]{this, bairro, cidade};
+        return new Object[]{this, sexo, endereco, numero, bairro, cidade, celular};
     }
 }

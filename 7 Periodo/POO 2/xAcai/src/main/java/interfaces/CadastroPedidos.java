@@ -4,10 +4,19 @@
  */
 package interfaces;
 
+import gerenciador.FuncoesUteis;
 import gerenciador.GerenciadorInterfaceGrafica;
+import java.awt.Color;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import modelo.Acai;
+import modelo.Cliente;
+import modelo.ItemPedido;
+import modelo.Pedido;
+import modelo.Tamanho;
+import modelo.TamanhoAcai;
+import org.hibernate.HibernateException;
 
 /**
  *
@@ -15,14 +24,20 @@ import javax.swing.table.DefaultTableModel;
  */
 public class CadastroPedidos extends javax.swing.JDialog {
 
-    private GerenciadorInterfaceGrafica gerenciadoInterfaceGrafica;
+    private GerenciadorInterfaceGrafica gerenciadorInterfaceGrafica;
+    private Cliente clienteSelecionado;
 
     /**
      * Creates new form CadastroAcai
+     *
+     * @param parent
+     * @param modal
+     * @param gerenciadoInterfaceGrafica
      */
     public CadastroPedidos(java.awt.Frame parent, boolean modal, GerenciadorInterfaceGrafica gerenciadoInterfaceGrafica) {
         super(parent, modal);
-        this.gerenciadoInterfaceGrafica = gerenciadoInterfaceGrafica;
+        this.gerenciadorInterfaceGrafica = gerenciadoInterfaceGrafica;
+        clienteSelecionado = null;
         initComponents();
     }
 
@@ -41,14 +56,14 @@ public class CadastroPedidos extends javax.swing.JDialog {
         mnuAlterar = new javax.swing.JMenuItem();
         mnuExcluir = new javax.swing.JMenuItem();
         jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        lblNome = new javax.swing.JLabel();
+        lblAcai = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         cbxMorango = new javax.swing.JCheckBox();
         cbxBanana = new javax.swing.JCheckBox();
         cbxCereja = new javax.swing.JCheckBox();
         txtNome = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        btnPesquisar = new javax.swing.JButton();
         cmbAcai = new javax.swing.JComboBox<>();
         jPanel5 = new javax.swing.JPanel();
         cbxLeiteCondensado = new javax.swing.JCheckBox();
@@ -59,15 +74,16 @@ public class CadastroPedidos extends javax.swing.JDialog {
         cbxPacoca = new javax.swing.JCheckBox();
         cbxChocoball = new javax.swing.JCheckBox();
         jPanel4 = new javax.swing.JPanel();
-        jRadioButton1 = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
+        rbtnSim = new javax.swing.JRadioButton();
+        rbtnNao = new javax.swing.JRadioButton();
         txtPreço = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         spnQtd = new javax.swing.JSpinner();
-        btnInserirPedido = new javax.swing.JButton();
+        btnNovo = new javax.swing.JButton();
         cmbTamanho = new javax.swing.JComboBox<>();
-        jLabel5 = new javax.swing.JLabel();
+        lblTamanho = new javax.swing.JLabel();
         btnExcluirPedido = new javax.swing.JButton();
+        btnInserir = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblPedidos = new javax.swing.JTable();
@@ -75,7 +91,7 @@ public class CadastroPedidos extends javax.swing.JDialog {
         mnuInserir.setText("Inserir");
         mnuInserir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnInserirPedidoActionPerformed(evt);
+                btnNovoActionPerformed(evt);
             }
         });
         mnuPopUp.add(mnuInserir);
@@ -92,12 +108,17 @@ public class CadastroPedidos extends javax.swing.JDialog {
         mnuPopUp.add(mnuExcluir);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                formComponentShown(evt);
+            }
+        });
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Cadastro de Pedido"));
 
-        jLabel1.setText("Nome");
+        lblNome.setText("Nome");
 
-        jLabel2.setText("Açai");
+        lblAcai.setText("Açai");
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Frutas"));
         jPanel3.setLayout(new java.awt.GridBagLayout());
@@ -111,9 +132,18 @@ public class CadastroPedidos extends javax.swing.JDialog {
         cbxCereja.setText("Cereja");
         jPanel3.add(cbxCereja, new java.awt.GridBagConstraints());
 
-        jButton1.setText("Pesquisar");
+        btnPesquisar.setText("Pesquisar");
+        btnPesquisar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPesquisarActionPerformed(evt);
+            }
+        });
 
-        cmbAcai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Açai", "Açai Premium", "Cupuaçu" }));
+        cmbAcai.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmbAcaiActionPerformed(evt);
+            }
+        });
 
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Cobertura"));
         jPanel5.setLayout(new java.awt.GridBagLayout());
@@ -142,44 +172,44 @@ public class CadastroPedidos extends javax.swing.JDialog {
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Entrega"));
         jPanel4.setLayout(new java.awt.BorderLayout());
 
-        grpEntrega.add(jRadioButton1);
-        jRadioButton1.setMnemonic('S');
-        jRadioButton1.setSelected(true);
-        jRadioButton1.setText("Sim");
-        jPanel4.add(jRadioButton1, java.awt.BorderLayout.CENTER);
+        grpEntrega.add(rbtnSim);
+        rbtnSim.setMnemonic('S');
+        rbtnSim.setSelected(true);
+        rbtnSim.setText("Sim");
+        jPanel4.add(rbtnSim, java.awt.BorderLayout.CENTER);
 
-        grpEntrega.add(jRadioButton2);
-        jRadioButton2.setMnemonic('N');
-        jRadioButton2.setText("Não");
-        jPanel4.add(jRadioButton2, java.awt.BorderLayout.PAGE_END);
+        grpEntrega.add(rbtnNao);
+        rbtnNao.setMnemonic('N');
+        rbtnNao.setText("Não");
+        jPanel4.add(rbtnNao, java.awt.BorderLayout.PAGE_END);
 
-        txtPreço.setText("R$ 10,00");
+        txtPreço.setText("0.00");
         txtPreço.setToolTipText("");
 
         jLabel4.setText("Qtd");
 
         spnQtd.setModel(new javax.swing.SpinnerNumberModel(1, 1, 10, 1));
 
-        btnInserirPedido.setText("Inserir");
-        btnInserirPedido.addActionListener(new java.awt.event.ActionListener() {
+        btnNovo.setText("Novo");
+        btnNovo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnInserirPedidoActionPerformed(evt);
+                btnNovoActionPerformed(evt);
             }
         });
 
-        cmbTamanho.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "300ml", "500ml", "700ml", "1Kg" }));
-        cmbTamanho.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cmbTamanhoActionPerformed(evt);
-            }
-        });
-
-        jLabel5.setText("Tamanho");
+        lblTamanho.setText("Tamanho");
 
         btnExcluirPedido.setText("Excluir");
         btnExcluirPedido.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnExcluirPedidoActionPerformed(evt);
+            }
+        });
+
+        btnInserir.setText("Inserir");
+        btnInserir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnInserirActionPerformed(evt);
             }
         });
 
@@ -192,15 +222,15 @@ public class CadastroPedidos extends javax.swing.JDialog {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel1))
+                            .addComponent(lblAcai)
+                            .addComponent(lblNome))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(txtNome)
                             .addComponent(cmbAcai, 0, 146, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jButton1)
+                            .addComponent(btnPesquisar)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel4)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -211,19 +241,21 @@ public class CadastroPedidos extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel5)
+                        .addComponent(lblTamanho)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cmbTamanho, 0, 278, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(btnInserirPedido))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtPreço, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(btnExcluirPedido))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addComponent(btnNovo)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnInserir))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtPreço, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btnExcluirPedido)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -234,16 +266,16 @@ public class CadastroPedidos extends javax.swing.JDialog {
                     .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel1)
+                            .addComponent(lblNome)
                             .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButton1))
+                            .addComponent(btnPesquisar))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jLabel5)
+                                .addComponent(lblTamanho)
                                 .addComponent(cmbTamanho, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jLabel2)
+                                .addComponent(lblAcai)
                                 .addComponent(cmbAcai, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(jLabel4)
                                 .addComponent(spnQtd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -257,11 +289,15 @@ public class CadastroPedidos extends javax.swing.JDialog {
                                 .addGap(6, 6, 6)
                                 .addComponent(txtPreço, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(btnInserirPedido)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(7, 7, 7))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btnNovo)
+                            .addComponent(btnInserir))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnExcluirPedido))))
         );
 
@@ -323,76 +359,83 @@ public class CadastroPedidos extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_btnExcluirPedidoActionPerformed
 
-    private void btnInserirPedidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInserirPedidoActionPerformed
+    private void btnNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNovoActionPerformed
         // TODO add your handling code here:
-        String nome = txtNome.getText();
-        String acai = cmbAcai.getSelectedItem().toString();
-        int qtd = Integer.parseInt(spnQtd.getValue().toString());
-        String tamanho = cmbTamanho.getSelectedItem().toString();
-        String morango = null;
-        String banana = null;
-        String cereja = null;
-        String leiteCondensado = null;
-        String coberturaMorango = null;
-        String coberturaChocolate = null;
-        String leitePo = null;
-        String pacoca = null;
-        String chocoball = null;
-        String entrega;
-        String valor;
+        if (validarCampos()) {
+            String nome = txtNome.getText();
+            String acai = cmbAcai.getSelectedItem().toString();
+            int qtd = Integer.parseInt(spnQtd.getValue().toString());
+            String tamanho = cmbTamanho.getSelectedItem().toString();
+            String morango = null;
+            String banana = null;
+            String cereja = null;
+            String leiteCondensado = null;
+            String coberturaMorango = null;
+            String coberturaChocolate = null;
+            String leitePo = null;
+            String pacoca = null;
+            String chocoball = null;
+            char entrega;
+            Float valor;
 
-        morango = selecionado(cbxMorango, morango);
-        banana = selecionado(cbxBanana, banana);
-        cereja = selecionado(cbxCereja, cereja);
-        leiteCondensado = selecionado(cbxLeiteCondensado, leiteCondensado);
-        coberturaMorango = selecionado(cbxCoberturaMorango, coberturaMorango);
-        coberturaChocolate = selecionado(cbxCoberturaChocolate, coberturaChocolate);
-        leitePo = selecionado(cbxLeitePo, leitePo);
-        pacoca = selecionado(cbxPacoca, pacoca);
-        chocoball = selecionado(cbxChocoball, chocoball);
+            morango = selecionado(cbxMorango, morango);
+            banana = selecionado(cbxBanana, banana);
+            cereja = selecionado(cbxCereja, cereja);
+            leiteCondensado = selecionado(cbxLeiteCondensado, leiteCondensado);
+            coberturaMorango = selecionado(cbxCoberturaMorango, coberturaMorango);
+            coberturaChocolate = selecionado(cbxCoberturaChocolate, coberturaChocolate);
+            leitePo = selecionado(cbxLeitePo, leitePo);
+            pacoca = selecionado(cbxPacoca, pacoca);
+            chocoball = selecionado(cbxChocoball, chocoball);
 
-        if (grpEntrega.getSelection().getMnemonic() == 'S') {
-            entrega = "Sim";
+            if (grpEntrega.getSelection().getMnemonic() == 'S') {
+                entrega = 'S';
+            } else {
+                entrega = 'N';
+            }
+            valor = gerenciadorInterfaceGrafica.obterValorAcaiPorNomeETamanho(cmbAcai.getSelectedItem().toString(), cmbTamanho.getSelectedItem().toString());
+            
+            txtPreço.setText(String.valueOf(Float.parseFloat(txtPreço.getText()) + (valor * qtd)));
+            adicionarTabela(nome, acai, qtd, tamanho, morango, banana, cereja, leiteCondensado, coberturaMorango, coberturaChocolate, leitePo, pacoca, chocoball, entrega, valor);
+        }
+    }//GEN-LAST:event_btnNovoActionPerformed
+
+    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+        // TODO add your handling code here:
+        gerenciadorInterfaceGrafica.carregarComboAcai(cmbAcai);
+        gerenciadorInterfaceGrafica.carregarComboTamanho(cmbTamanho, cmbAcai.getSelectedItem().toString());
+    }//GEN-LAST:event_formComponentShown
+
+    private void btnPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisarActionPerformed
+        // TODO add your handling code here:
+        clienteSelecionado = gerenciadorInterfaceGrafica.abrirJanelaPesquisarCliente();
+        if (clienteSelecionado != null) {
+            txtNome.setText(clienteSelecionado.getNome());
+        }
+    }//GEN-LAST:event_btnPesquisarActionPerformed
+
+    private void btnInserirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInserirActionPerformed
+        // TODO add your handling code here:
+        if (clienteSelecionado != null) {
+            try {
+                char entrega = (char) grpEntrega.getSelection().getMnemonic();
+                int id = gerenciadorInterfaceGrafica.getGerenciadorDominio().inserirPedido(clienteSelecionado, entrega, Float.parseFloat(txtPreço.getText()), tblPedidos);
+
+                JOptionPane.showMessageDialog(this, "Pedido " + id + " inserido com sucesso!");
+                
+                limparCampos();
+            } catch (HibernateException ex) {
+                JOptionPane.showMessageDialog(this, "Erro ao inserir pedido.");
+            }
         } else {
-            entrega = "Não";
+            JOptionPane.showMessageDialog(this, "Selecione um cliente.");
         }
+    }//GEN-LAST:event_btnInserirActionPerformed
 
-        switch (tamanho) {
-            case "300ml":
-                valor = "R$ 10,00";
-                break;
-            case "500ml":
-                valor = "R$ 12,00";
-                break;
-            case "700ml":
-                valor = "R$ 15,00";
-                break;
-            default:
-                valor = "R$ 20,00";
-                break;
-        }
-
-        inserirTabela(nome, acai, qtd, tamanho, morango, banana, cereja, leiteCondensado, coberturaMorango, coberturaChocolate, leitePo, pacoca, chocoball, entrega, valor);
-    }//GEN-LAST:event_btnInserirPedidoActionPerformed
-
-    private void cmbTamanhoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbTamanhoActionPerformed
+    private void cmbAcaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbAcaiActionPerformed
         // TODO add your handling code here:
-        String tamanho = cmbTamanho.getSelectedItem().toString();
-        switch (tamanho) {
-            case "300ml":
-                txtPreço.setText("R$ 10,00");
-                break;
-            case "500ml":
-                txtPreço.setText("R$ 12,00");
-                break;
-            case "700ml":
-                txtPreço.setText("R$ 15,00");
-                break;
-            default:
-                txtPreço.setText("R$ 20,00");
-                break;
-        }
-    }//GEN-LAST:event_cmbTamanhoActionPerformed
+        gerenciadorInterfaceGrafica.carregarComboTamanho(cmbTamanho, cmbAcai.getSelectedItem().toString());
+    }//GEN-LAST:event_cmbAcaiActionPerformed
 
     private String selecionado(JCheckBox cbx, String texto) {
         if (cbx.isSelected()) {
@@ -403,7 +446,61 @@ public class CadastroPedidos extends javax.swing.JDialog {
         return texto;
     }
 
-    private void inserirTabela(String nome, String acai, int qtd, String tamanho, String morango, String banana, String cereja, String leiteCondensado, String coberturaMorango, String coberturaChocolate, String leitePo, String pacoca, String chocoball, String entrega, String valor) {
+    private boolean validarCampos() {
+        String msgErro = "";
+        FuncoesUteis.voltarCor(lblNome);
+        FuncoesUteis.voltarCor(lblAcai);
+        FuncoesUteis.voltarCor(lblTamanho);
+
+        if (txtNome.getText().isEmpty()) {
+            msgErro = msgErro + "Selecione um CLIENTE.\n";
+            lblNome.setForeground(Color.red);
+        }
+
+        if (cmbAcai.getSelectedItem().toString().isEmpty()) {
+            msgErro = msgErro + "Selecione um AÇAI.\n";
+            lblAcai.setForeground(Color.red);
+        }
+
+        if (cmbTamanho.getSelectedItem().toString().isEmpty()) {
+            msgErro = msgErro + "Selecione um Tamanho.\n";
+            lblTamanho.setForeground(Color.red);
+        }
+
+        if (msgErro.isEmpty()) {
+            return true;
+        } else {
+            JOptionPane.showMessageDialog(this, msgErro, "Cadastro de Pedidos", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+    }
+
+    private void limparCampos() {
+        clienteSelecionado = null;
+        txtNome.setText("");
+        gerenciadorInterfaceGrafica.carregarComboAcai(cmbAcai);
+        gerenciadorInterfaceGrafica.carregarComboTamanho(cmbTamanho, cmbAcai.getSelectedItem().toString());
+        spnQtd.setValue(1);
+        cbxBanana.setSelected(false);
+        cbxCereja.setSelected(false);
+        cbxChocoball.setSelected(false);
+        cbxCoberturaChocolate.setSelected(false);
+        cbxCoberturaMorango.setSelected(false);
+        cbxLeiteCondensado.setSelected(false);
+        cbxLeitePo.setSelected(false);
+        cbxMorango.setSelected(false);
+        cbxPacoca.setSelected(false);
+        rbtnSim.setSelected(true);
+        txtPreço.setText("0.00");
+        limparTabela();
+    }
+    
+    private void limparTabela() {
+        //Criar uma linha me branco
+        ((DefaultTableModel) tblPedidos.getModel()).setRowCount(0);
+    }
+
+    private void adicionarTabela(String nome, String acai, int qtd, String tamanho, String morango, String banana, String cereja, String leiteCondensado, String coberturaMorango, String coberturaChocolate, String leitePo, String pacoca, String chocoball, char entrega, float valor) {
         //Criar uma linha me branco
         ((DefaultTableModel) tblPedidos.getModel()).addRow(new Object[15]);
         int linha = tblPedidos.getRowCount() - 1;
@@ -411,7 +508,7 @@ public class CadastroPedidos extends javax.swing.JDialog {
 
         tblPedidos.setValueAt(nome, linha, coluna++);
         tblPedidos.setValueAt(acai, linha, coluna++);
-        tblPedidos.setValueAt(qtd, linha, coluna++);
+        tblPedidos.setValueAt(String.valueOf(qtd), linha, coluna++);
         tblPedidos.setValueAt(tamanho, linha, coluna++);
         tblPedidos.setValueAt(morango, linha, coluna++);
         tblPedidos.setValueAt(banana, linha, coluna++);
@@ -422,13 +519,15 @@ public class CadastroPedidos extends javax.swing.JDialog {
         tblPedidos.setValueAt(leitePo, linha, coluna++);
         tblPedidos.setValueAt(pacoca, linha, coluna++);
         tblPedidos.setValueAt(chocoball, linha, coluna++);
-        tblPedidos.setValueAt(entrega, linha, coluna++);
-        tblPedidos.setValueAt(valor, linha, coluna++);
+        tblPedidos.setValueAt(String.valueOf(entrega), linha, coluna++);
+        tblPedidos.setValueAt(String.valueOf(valor), linha, coluna++);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnExcluirPedido;
-    private javax.swing.JButton btnInserirPedido;
+    private javax.swing.JButton btnInserir;
+    private javax.swing.JButton btnNovo;
+    private javax.swing.JButton btnPesquisar;
     private javax.swing.JCheckBox cbxBanana;
     private javax.swing.JCheckBox cbxCereja;
     private javax.swing.JCheckBox cbxChocoball;
@@ -441,24 +540,23 @@ public class CadastroPedidos extends javax.swing.JDialog {
     private javax.swing.JComboBox<String> cmbAcai;
     private javax.swing.JComboBox<String> cmbTamanho;
     private javax.swing.ButtonGroup grpEntrega;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
-    private javax.swing.JRadioButton jRadioButton1;
-    private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lblAcai;
+    private javax.swing.JLabel lblNome;
+    private javax.swing.JLabel lblTamanho;
     private javax.swing.JMenuItem mnuAlterar;
     private javax.swing.JMenuItem mnuExcluir;
     private javax.swing.JMenuItem mnuInserir;
     private javax.swing.JPopupMenu mnuPopUp;
+    private javax.swing.JRadioButton rbtnNao;
+    private javax.swing.JRadioButton rbtnSim;
     private javax.swing.JSpinner spnQtd;
     private javax.swing.JTable tblPedidos;
     private javax.swing.JTextField txtNome;

@@ -6,11 +6,15 @@ package modelo;
 
 import java.io.Serializable;
 import java.text.ParseException;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
@@ -27,6 +31,9 @@ public class Acai implements Serializable {
 
     @Column(name = "nome", nullable = false)
     private String nome;
+    
+    @OneToMany (mappedBy = "tamanho", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<TamanhoAcai> tamanhoAcai;
     
     public Acai() {
     }
@@ -49,6 +56,14 @@ public class Acai implements Serializable {
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public List<TamanhoAcai> getTamanhoAcai() {
+        return tamanhoAcai;
+    }
+
+    public void setTamanhoAcai(List<TamanhoAcai> tamanhoAcai) {
+        this.tamanhoAcai = tamanhoAcai;
     }
 
     @Override

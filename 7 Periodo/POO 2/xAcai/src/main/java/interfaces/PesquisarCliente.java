@@ -9,8 +9,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-import modelo.Acai;
 import modelo.Cliente;
+import org.hibernate.HibernateException;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -33,15 +33,16 @@ public class PesquisarCliente extends javax.swing.JDialog {
         this.gerenciadorInterfaceGrafica = gerenciadoInterfaceGrafica;
         initComponents();
         clienteSelecionado = null;
-        
+
         // Para colocar um FOTO em UMA CELULA DA TABELA
-        tblAcai.getColumnModel().getColumn(5).setCellRenderer((JTable jtable, Object o, boolean bln, boolean bln1, int i, int i1) -> {
-            // OBJETO FINAL
-            JLabel label = new JLabel();
-            if ( o != null)
-                label.setIcon( new ImageIcon( (byte[]) o) );
-            return label;
-        });
+//        tblCliente.getColumnModel().getColumn(5).setCellRenderer((JTable jtable, Object o, boolean bln, boolean bln1, int i, int i1) -> {
+//            // OBJETO FINAL
+//            JLabel label = new JLabel();
+//            if (o != null) {
+//                label.setIcon(new ImageIcon((byte[]) o));
+//            }
+//            return label;
+//        });
     }
 
     /**
@@ -55,7 +56,7 @@ public class PesquisarCliente extends javax.swing.JDialog {
 
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblAcai = new javax.swing.JTable();
+        tblCliente = new javax.swing.JTable();
         txtPesquisar = new javax.swing.JTextField();
         btnPesquisar = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
@@ -66,26 +67,26 @@ public class PesquisarCliente extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Lista de Açaí"));
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Lista de Clientes"));
         jPanel2.setLayout(new java.awt.BorderLayout());
 
-        tblAcai.setModel(new javax.swing.table.DefaultTableModel(
+        tblCliente.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Nome", "Valor"
+                "Nome", "Sexo", "Endereço", "Número", "Bairro", "Cidade", "Celular"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false
+                false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(tblAcai);
+        jScrollPane1.setViewportView(tblCliente);
 
         jPanel2.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
@@ -141,7 +142,7 @@ public class PesquisarCliente extends javax.swing.JDialog {
                 .addContainerGap(19, Short.MAX_VALUE))
         );
 
-        cmbTipo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Nome", "Valor" }));
+        cmbTipo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Nome", "Telefone", "Número" }));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -178,47 +179,49 @@ public class PesquisarCliente extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    public Cliente getClienteSelecionado() {
+        return clienteSelecionado;
+    }
+
     private void btnPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisarActionPerformed
-        try {
-            // TODO add your handling code here:
-            List<Acai> lista = gerenciadorInterfaceGrafica.getGerenciadorDominio().pesquisarAcai(cmbTipo.getSelectedIndex(), txtPesquisar.getText());
-
-            //Limpar a tabela
-            ((DefaultTableModel) tblAcai.getModel()).setRowCount(0);
-
-            for (Acai acai : lista) {
-                ((DefaultTableModel) tblAcai.getModel()).addRow(acai.toArray());
-            }
-        } catch (ClassNotFoundException | SQLException | ParseException ex) {
-            JOptionPane.showMessageDialog(this, "Erro ao pesquisar açaí. " + ex);
-        }
+        gerenciadorInterfaceGrafica.carregarTabelaCliente(tblCliente, Cliente.class);
     }//GEN-LAST:event_btnPesquisarActionPerformed
 
     private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
         // TODO add your handling code here:
-        int linha = tblAcai.getSelectedRow();
+        int linha = tblCliente.getSelectedRow();
 
         try {
             if (linha >= 0) {
-                Acai acai = (Acai) tblAcai.getValueAt(linha, 0);
-                gerenciadorInterfaceGrafica.getGerenciadorDominio().excluir(acai);
-                ((DefaultTableModel) tblAcai.getModel()).removeRow(linha);
-                JOptionPane.showMessageDialog(this, "Açaí excluído com sucesso!");
+                Cliente cliente = (Cliente) tblCliente.getValueAt(linha, 0);
+                gerenciadorInterfaceGrafica.getGerenciadorDominio().excluir(cliente);
+                gerenciadorInterfaceGrafica.carregarTabelaCliente(tblCliente, Cliente.class);
+                JOptionPane.showMessageDialog(this, "Cliente excluído com sucesso!");
             } else {
-                JOptionPane.showMessageDialog(this, "Selecione um açaí.");
+                JOptionPane.showMessageDialog(this, "Selecione um cliente.");
             }
-        } catch (ClassNotFoundException | SQLException  ex) {
-            JOptionPane.showMessageDialog(this, "Erro ao excluir açaí. " + ex);
+        } catch (HibernateException ex) {
+            JOptionPane.showMessageDialog(this, "Erro ao excluir cliente. " + ex);
         }
 
     }//GEN-LAST:event_btnExcluirActionPerformed
 
     private void btnSelecionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelecionarActionPerformed
         // TODO add your handling code here:
+        int linha = tblCliente.getSelectedRow();
+
+        if (linha >= 0) {
+            clienteSelecionado = (Cliente) tblCliente.getValueAt(linha, 0);
+            this.dispose();
+        } else {
+            JOptionPane.showMessageDialog(this, "Selecione um cliente.");
+        }
     }//GEN-LAST:event_btnSelecionarActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         // TODO add your handling code here:
+        clienteSelecionado = null;
+        this.dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -230,7 +233,7 @@ public class PesquisarCliente extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable tblAcai;
+    private javax.swing.JTable tblCliente;
     private javax.swing.JTextField txtPesquisar;
     // End of variables declaration//GEN-END:variables
 }

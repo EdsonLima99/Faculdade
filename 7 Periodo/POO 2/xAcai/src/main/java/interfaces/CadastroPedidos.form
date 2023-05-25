@@ -15,7 +15,7 @@
             <Property name="text" type="java.lang.String" value="Inserir"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnInserirPedidoActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnNovoActionPerformed"/>
           </Events>
         </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="mnuAlterar">
@@ -41,6 +41,9 @@
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
     <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
   </SyntheticProperties>
+  <Events>
+    <EventHandler event="componentShown" listener="java.awt.event.ComponentListener" parameters="java.awt.event.ComponentEvent" handler="formComponentShown"/>
+  </Events>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
@@ -96,8 +99,8 @@
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                       <Group type="102" attributes="0">
                           <Group type="103" groupAlignment="1" attributes="0">
-                              <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                              <Component id="lblAcai" min="-2" max="-2" attributes="0"/>
+                              <Component id="lblNome" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
@@ -106,7 +109,7 @@
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jButton1" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnPesquisar" min="-2" max="-2" attributes="0"/>
                               <Group type="102" alignment="0" attributes="0">
                                   <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
@@ -121,23 +124,24 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
-                          <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
+                          <Component id="lblTamanho" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="cmbTamanho" pref="278" max="32767" attributes="0"/>
                       </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="btnNovo" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
+                          <Component id="btnInserir" min="-2" max="-2" attributes="0"/>
+                      </Group>
                       <Group type="102" attributes="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" attributes="0">
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="jPanel4" alignment="0" min="-2" pref="91" max="-2" attributes="0"/>
-                                      <Component id="btnInserirPedido" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="txtPreço" min="-2" pref="91" max="-2" attributes="0"/>
-                              </Group>
-                              <Component id="btnExcluirPedido" min="-2" max="-2" attributes="0"/>
-                          </Group>
+                          <Component id="jPanel4" min="-2" pref="91" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="txtPreço" min="-2" pref="91" max="-2" attributes="0"/>
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="1" attributes="0">
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          <Component id="btnExcluirPedido" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -152,18 +156,18 @@
                       <Component id="jPanel4" min="-2" pref="92" max="-2" attributes="0"/>
                       <Group type="102" attributes="0">
                           <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="lblNome" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="txtNome" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="jButton1" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnPesquisar" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                                  <Component id="jLabel5" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="lblTamanho" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="cmbTamanho" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="lblAcai" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="cmbAcai" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="spnQtd" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -184,11 +188,17 @@
                       </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jPanel6" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
                       <Group type="102" attributes="0">
-                          <Component id="btnInserirPedido" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="jPanel6" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" attributes="0">
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="btnNovo" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnInserir" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="32767" attributes="0"/>
                           <Component id="btnExcluirPedido" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -197,12 +207,12 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JLabel" name="jLabel1">
+        <Component class="javax.swing.JLabel" name="lblNome">
           <Properties>
             <Property name="text" type="java.lang.String" value="Nome"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JLabel" name="jLabel2">
+        <Component class="javax.swing.JLabel" name="lblAcai">
           <Properties>
             <Property name="text" type="java.lang.String" value="A&#xe7;ai"/>
           </Properties>
@@ -252,21 +262,23 @@
         </Container>
         <Component class="javax.swing.JTextField" name="txtNome">
         </Component>
-        <Component class="javax.swing.JButton" name="jButton1">
+        <Component class="javax.swing.JButton" name="btnPesquisar">
           <Properties>
             <Property name="text" type="java.lang.String" value="Pesquisar"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnPesquisarActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JComboBox" name="cmbAcai">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="3">
-                <StringItem index="0" value="A&#xe7;ai"/>
-                <StringItem index="1" value="A&#xe7;ai Premium"/>
-                <StringItem index="2" value="Cupua&#xe7;u"/>
-              </StringArray>
+              <StringArray count="0"/>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cmbAcaiActionPerformed"/>
+          </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
           </AuxValues>
@@ -368,7 +380,7 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
           <SubComponents>
-            <Component class="javax.swing.JRadioButton" name="jRadioButton1">
+            <Component class="javax.swing.JRadioButton" name="rbtnSim">
               <Properties>
                 <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                   <ComponentRef name="grpEntrega"/>
@@ -383,7 +395,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="javax.swing.JRadioButton" name="jRadioButton2">
+            <Component class="javax.swing.JRadioButton" name="rbtnNao">
               <Properties>
                 <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                   <ComponentRef name="grpEntrega"/>
@@ -401,7 +413,7 @@
         </Container>
         <Component class="javax.swing.JLabel" name="txtPre&#xe7;o">
           <Properties>
-            <Property name="text" type="java.lang.String" value="R$ 10,00"/>
+            <Property name="text" type="java.lang.String" value="0.00"/>
             <Property name="toolTipText" type="java.lang.String" value=""/>
           </Properties>
         </Component>
@@ -417,33 +429,25 @@
             </Property>
           </Properties>
         </Component>
-        <Component class="javax.swing.JButton" name="btnInserirPedido">
+        <Component class="javax.swing.JButton" name="btnNovo">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Inserir"/>
+            <Property name="text" type="java.lang.String" value="Novo"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnInserirPedidoActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnNovoActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JComboBox" name="cmbTamanho">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="4">
-                <StringItem index="0" value="300ml"/>
-                <StringItem index="1" value="500ml"/>
-                <StringItem index="2" value="700ml"/>
-                <StringItem index="3" value="1Kg"/>
-              </StringArray>
+              <StringArray count="0"/>
             </Property>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cmbTamanhoActionPerformed"/>
-          </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
           </AuxValues>
         </Component>
-        <Component class="javax.swing.JLabel" name="jLabel5">
+        <Component class="javax.swing.JLabel" name="lblTamanho">
           <Properties>
             <Property name="text" type="java.lang.String" value="Tamanho"/>
           </Properties>
@@ -454,6 +458,14 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnExcluirPedidoActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="btnInserir">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Inserir"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnInserirActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>

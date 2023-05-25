@@ -7,11 +7,12 @@ package interfaces;
 import gerenciador.FuncoesUteis;
 import gerenciador.GerenciadorInterfaceGrafica;
 import java.awt.Color;
-import java.sql.SQLException;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
 import modelo.Acai;
+import modelo.Tamanho;
+import modelo.TamanhoAcai;
+import org.hibernate.HibernateException;
 
 /**
  *
@@ -19,18 +20,25 @@ import modelo.Acai;
  */
 public class CadastroAcai extends javax.swing.JDialog {
 
-    private GerenciadorInterfaceGrafica gerenciadoInterfaceGrafica;
+    private GerenciadorInterfaceGrafica gerenciadorInterfaceGrafica;
     private Acai acaiSelecionado;
+    private Tamanho tamanhoSelecionado;
+    private TamanhoAcai tamanhoAcaiSelecionado;
 
     /**
      * Creates new form CadastroAcai
+     *
+     * @param parent
+     * @param modal
+     * @param gerenciadoInterfaceGrafica
      */
     public CadastroAcai(java.awt.Frame parent, boolean modal, GerenciadorInterfaceGrafica gerenciadoInterfaceGrafica) {
         super(parent, modal);
-        this.gerenciadoInterfaceGrafica = gerenciadoInterfaceGrafica;
-        initComponents();
+        this.gerenciadorInterfaceGrafica = gerenciadoInterfaceGrafica;
         acaiSelecionado = null;
-        habilitarBotoes();
+        tamanhoSelecionado = null;
+        tamanhoAcaiSelecionado = null;
+        initComponents();
     }
 
     /**
@@ -45,27 +53,39 @@ public class CadastroAcai extends javax.swing.JDialog {
         jPanel1 = new javax.swing.JPanel();
         lblNome = new javax.swing.JLabel();
         txtNome = new javax.swing.JTextField();
-        jButton4 = new javax.swing.JButton();
+        btnPesquisar = new javax.swing.JButton();
+        lblValor = new javax.swing.JLabel();
+        txtValor = new javax.swing.JTextField();
+        lblTamanho = new javax.swing.JLabel();
+        cmbTamanho = new javax.swing.JComboBox<>();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblAcai = new javax.swing.JTable();
         jPanel4 = new javax.swing.JPanel();
         btnCancelar = new javax.swing.JButton();
         btnInserir = new javax.swing.JButton();
-        btnAlterar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                formComponentShown(evt);
+            }
+        });
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Açai"));
 
         lblNome.setText("Nome");
 
-        jButton4.setText("Pesquisar");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        btnPesquisar.setText("Pesquisar");
+        btnPesquisar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+                btnPesquisarActionPerformed(evt);
             }
         });
+
+        lblValor.setText("Valor");
+
+        lblTamanho.setText("Tamanho");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -73,11 +93,17 @@ public class CadastroAcai extends javax.swing.JDialog {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lblNome)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(lblTamanho, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblValor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblNome, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, 207, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(txtValor)
+                    .addComponent(cmbTamanho, 0, 196, Short.MAX_VALUE)
+                    .addComponent(txtNome, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton4)
+                .addComponent(btnPesquisar)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -87,11 +113,19 @@ public class CadastroAcai extends javax.swing.JDialog {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblNome)
                     .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton4))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnPesquisar))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblTamanho)
+                    .addComponent(cmbTamanho, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblValor)
+                    .addComponent(txtValor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(15, 15, 15))
         );
 
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Lista de Clientes"));
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Lista de Açai"));
         jPanel3.setLayout(new java.awt.BorderLayout());
 
         tblAcai.setModel(new javax.swing.table.DefaultTableModel(
@@ -99,11 +133,11 @@ public class CadastroAcai extends javax.swing.JDialog {
 
             },
             new String [] {
-                "Nome"
+                "Nome", "Tamanho", "Valor"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false
+                false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -122,16 +156,7 @@ public class CadastroAcai extends javax.swing.JDialog {
         });
 
         btnInserir.setMnemonic('I');
-        btnInserir.setText("Inserir");
         btnInserir.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnInserirActionPerformed(evt);
-            }
-        });
-
-        btnAlterar.setMnemonic('A');
-        btnAlterar.setText("Alterar");
-        btnAlterar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnInserirActionPerformed(evt);
             }
@@ -145,8 +170,6 @@ public class CadastroAcai extends javax.swing.JDialog {
                 .addGap(27, 27, 27)
                 .addComponent(btnInserir)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnAlterar)
-                .addGap(37, 37, 37)
                 .addComponent(btnCancelar)
                 .addGap(33, 33, 33))
         );
@@ -156,8 +179,7 @@ public class CadastroAcai extends javax.swing.JDialog {
                 .addGap(30, 30, 30)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnInserir)
-                    .addComponent(btnCancelar)
-                    .addComponent(btnAlterar))
+                    .addComponent(btnCancelar))
                 .addContainerGap(48, Short.MAX_VALUE))
         );
 
@@ -192,53 +214,83 @@ public class CadastroAcai extends javax.swing.JDialog {
         // TODO add your handling code here:
         limparCampos();
         acaiSelecionado = null;
-        habilitarBotoes();
+        tamanhoSelecionado = null;
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     private void btnInserirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInserirActionPerformed
         // TODO add your handling code here:
-        String nome = txtNome.getText();
-
         if (validarCampos()) {
+            String nome = txtNome.getText();
+            String tamanho = cmbTamanho.getSelectedItem().toString();
+            Float valor = Float.parseFloat(txtValor.getText());
+
             try {
                 //INSERIR no banco
-                if (((JButton) evt.getSource()).getMnemonic() == 'I') {
-                    int id = gerenciadoInterfaceGrafica.getGerenciadorDominio().inserirAcai(nome);
+                if (acaiSelecionado == null) {
+                    int id = gerenciadorInterfaceGrafica.getGerenciadorDominio().inserirAcai(nome, tamanho, valor);
 
                     JOptionPane.showMessageDialog(this, "Açaí " + id + " inserido com sucesso!");
                 } else {
-                    gerenciadoInterfaceGrafica.getGerenciadorDominio().alterarAcai(acaiSelecionado.getId(), nome);
+                    gerenciadorInterfaceGrafica.getGerenciadorDominio().alterarAcai(acaiSelecionado, nome);
 
                     JOptionPane.showMessageDialog(this, "Açaí " + acaiSelecionado.getId() + " alterado com sucesso!");
                 }
-            } catch (ClassNotFoundException | SQLException ex) {
+                gerenciadorInterfaceGrafica.carregarTabelaAcai(tblAcai, TamanhoAcai.class);
+                limparCampos();
+            } catch (HibernateException ex) {
                 JOptionPane.showMessageDialog(this, "Erro ao inserir açaí.");
             }
         }
     }//GEN-LAST:event_btnInserirActionPerformed
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+    private void btnPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisarActionPerformed
         // TODO add your handling code here:
-        acaiSelecionado = gerenciadoInterfaceGrafica.abrirJanelaPesquisarAcai();
-        preencherCampos(acaiSelecionado);
-    }//GEN-LAST:event_jButton4ActionPerformed
+//        acaiSelecionado = gerenciadorInterfaceGrafica.abrirJanelaPesquisarAcai();
+//        tamanhoAcaiSelecionado = (TamanhoAcai) acaiSelecionado.getTamanhoAcai();
+//        tamanhoSelecionado = tamanhoAcaiSelecionado.getTamanho();
+        preencherCampos(acaiSelecionado, tamanhoAcaiSelecionado, tamanhoSelecionado);
+    }//GEN-LAST:event_btnPesquisarActionPerformed
 
-    private void inserirTabela(String nome) {
-        //Criar uma linha me branco
-        ((DefaultTableModel) tblAcai.getModel()).addRow(new Object[1]);
-        int linha = tblAcai.getRowCount() - 1;
-        int coluna = 0;
+    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+        // TODO add your handling code here:
+        gerenciadorInterfaceGrafica.carregarCombo(cmbTamanho, Tamanho.class);
+        gerenciadorInterfaceGrafica.carregarTabelaAcai(tblAcai, TamanhoAcai.class);
+        nomeBotao();
+    }//GEN-LAST:event_formComponentShown
 
-        tblAcai.setValueAt(nome, linha, coluna++);
-    }
-
+//    private void inserirTabela(String nome) {
+//        //Criar uma linha me branco
+//        ((DefaultTableModel) tblAcai.getModel()).addRow(new Object[1]);
+//        int linha = tblAcai.getRowCount() - 1;
+//        int coluna = 0;
+//
+//        tblAcai.setValueAt(nome, linha, coluna++);
+//    }
     private boolean validarCampos() {
         String msgErro = "";
         FuncoesUteis.voltarCor(lblNome);
+        FuncoesUteis.voltarCor(lblValor);
 
         if (txtNome.getText().isEmpty()) {
             msgErro = msgErro + "Digite o NOME.\n";
             lblNome.setForeground(Color.red);
+        }
+
+        if (txtValor.getText().isEmpty()) {
+            msgErro = msgErro + "Digite o VALOR.\n";
+            lblValor.setForeground(Color.red);
+        }
+
+        if (txtValor.getText().isEmpty()) {
+            msgErro = msgErro + "Digite o VALOR.\n";
+            lblValor.setForeground(Color.red);
+        } else {
+            try {
+                Float.parseFloat(txtValor.getText());
+            } catch (NumberFormatException e) {
+                msgErro = msgErro + "Digite um VALOR válido.\n";
+                lblValor.setForeground(Color.red);
+            }
         }
 
         if (msgErro.isEmpty()) {
@@ -249,39 +301,45 @@ public class CadastroAcai extends javax.swing.JDialog {
         }
     }
 
-    private void preencherCampos(Acai acaiSelecionado) {
+    private void preencherCampos(Acai acaiSelecionado, TamanhoAcai tamanhoAcai, Tamanho tamanho) {
         if (acaiSelecionado != null) {
             txtNome.setText(acaiSelecionado.getNome());
+            cmbTamanho.setSelectedItem(tamanho.getTamanho());
+            txtValor.setText(String.valueOf(tamanhoAcai.getValor()));
         }
+    }
 
-        habilitarBotoes();
+    private void nomeBotao() {
+        if (acaiSelecionado == null) {
+            btnInserir.setText("Inserir");
+        } else {
+            btnInserir.setText("Alterar");
+        }
     }
 
     private void limparCampos() {
         acaiSelecionado = null;
+        tamanhoSelecionado = null;
+        tamanhoAcaiSelecionado = null;
         txtNome.setText("");
+        txtValor.setText("");
+        cmbTamanho.setSelectedIndex(0);
     }
 
-    private void habilitarBotoes() {
-        if (acaiSelecionado == null) {
-            btnInserir.setVisible(true);
-            btnAlterar.setVisible(false);
-        } else {
-            btnInserir.setVisible(false);
-            btnAlterar.setVisible(true);
-        }
-    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAlterar;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnInserir;
-    private javax.swing.JButton jButton4;
+    private javax.swing.JButton btnPesquisar;
+    private javax.swing.JComboBox<String> cmbTamanho;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblNome;
+    private javax.swing.JLabel lblTamanho;
+    private javax.swing.JLabel lblValor;
     private javax.swing.JTable tblAcai;
     private javax.swing.JTextField txtNome;
+    private javax.swing.JTextField txtValor;
     // End of variables declaration//GEN-END:variables
 }

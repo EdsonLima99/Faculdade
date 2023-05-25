@@ -1,14 +1,11 @@
 package interfaces;
 
 import gerenciador.GerenciadorInterfaceGrafica;
-import java.sql.SQLException;
-import java.text.ParseException;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import modelo.Acai;
+import modelo.TamanhoAcai;
+import org.hibernate.HibernateException;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -22,15 +19,20 @@ public class PesquisarAcai extends javax.swing.JDialog {
 
     private GerenciadorInterfaceGrafica gerenciadorInterfaceGrafica;
     private Acai acaiSelecionado;
+    private TamanhoAcai tamanhoAcaiSelecionado;
 
     /**
      * Creates new form ClientesPorNome
+     * @param parent
+     * @param modal
+     * @param gerenciadoInterfaceGrafica
      */
     public PesquisarAcai(java.awt.Frame parent, boolean modal, GerenciadorInterfaceGrafica gerenciadoInterfaceGrafica) {
         super(parent, modal);
         this.gerenciadorInterfaceGrafica = gerenciadoInterfaceGrafica;
         initComponents();
         acaiSelecionado = null;
+        tamanhoAcaiSelecionado = null;
     }
 
     /**
@@ -63,11 +65,11 @@ public class PesquisarAcai extends javax.swing.JDialog {
 
             },
             new String [] {
-                "Nome", "Valor"
+                "Nome", "Tamanho", "Valor"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false
+                false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -130,7 +132,7 @@ public class PesquisarAcai extends javax.swing.JDialog {
                 .addContainerGap(19, Short.MAX_VALUE))
         );
 
-        cmbTipo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Nome", "Valor" }));
+        cmbTipo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Nome", "Tamanho", "Valor" }));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -172,19 +174,7 @@ public class PesquisarAcai extends javax.swing.JDialog {
     }
 
     private void btnPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisarActionPerformed
-        try {
-            // TODO add your handling code here:
-            List<Acai> lista = gerenciadorInterfaceGrafica.getGerenciadorDominio().pesquisarAcai(cmbTipo.getSelectedIndex(), txtPesquisar.getText());
-
-            //Limpar a tabela
-            ((DefaultTableModel) tblAcai.getModel()).setRowCount(0);
-
-            for (Acai acai : lista) {
-                ((DefaultTableModel) tblAcai.getModel()).addRow(acai.toArray());
-            }
-        } catch (ClassNotFoundException | SQLException | ParseException ex) {
-            JOptionPane.showMessageDialog(this, "Erro ao pesquisar açaí. " + ex);
-        }
+        gerenciadorInterfaceGrafica.carregarTabelaAcai(tblAcai, TamanhoAcai.class);
     }//GEN-LAST:event_btnPesquisarActionPerformed
 
     private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
@@ -193,14 +183,14 @@ public class PesquisarAcai extends javax.swing.JDialog {
 
         try {
             if (linha >= 0) {
-                Acai acai = (Acai) tblAcai.getValueAt(linha, 0);
-                gerenciadorInterfaceGrafica.getGerenciadorDominio().excluir(acai);
+                TamanhoAcai tamanhoAcai = gerenciadorInterfaceGrafica.getGerenciadorDominio().listarTamanhoAcai((Float) tblAcai.getValueAt(linha, 2));
+                gerenciadorInterfaceGrafica.getGerenciadorDominio().excluir(tamanhoAcai);
                 ((DefaultTableModel) tblAcai.getModel()).removeRow(linha);
                 JOptionPane.showMessageDialog(this, "Açaí excluído com sucesso!");
             } else {
                 JOptionPane.showMessageDialog(this, "Selecione um açaí.");
             }
-        } catch (ClassNotFoundException | SQLException ex) {
+        } catch (HibernateException ex) {
             JOptionPane.showMessageDialog(this, "Erro ao excluir açaí. " + ex);
         }
     }//GEN-LAST:event_btnExcluirActionPerformed

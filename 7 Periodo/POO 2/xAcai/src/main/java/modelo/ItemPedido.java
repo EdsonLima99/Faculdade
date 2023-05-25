@@ -52,6 +52,9 @@ public class ItemPedido implements Serializable {
     @Column(name = "chocoball", nullable = false)
     private int chocoball;
 
+    public ItemPedido() {
+    }
+
     public ItemPedido(int tamanho, int morango, int banana, int cereja, int leiteCondensado, int coberturaMorango, int coberturaChocolate, int leitePo, int pacoca, int chocoball, Pedido pedido, TamanhoAcai tamanhoAcai) {
         this.tamanho = tamanho;
         this.morango = morango;
@@ -63,8 +66,7 @@ public class ItemPedido implements Serializable {
         this.leitePo = leitePo;
         this.pacoca = pacoca;
         this.chocoball = chocoball;
-        this.itemPedidoPK.setPedido(pedido);
-        this.itemPedidoPK.setTamanhoAcai(tamanhoAcai);
+        this.itemPedidoPK = new ItemPedidoPK(tamanhoAcai, pedido);
     }
 
     public Pedido getPedido() {

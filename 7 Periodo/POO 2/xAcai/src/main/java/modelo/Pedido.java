@@ -51,6 +51,9 @@ public class Pedido implements Serializable {
     @OneToMany(mappedBy = "itemPedidoPK.pedido")
     private List<ItemPedido> itemPedido;
 
+    public Pedido() {
+    }
+
     public Pedido(Date data, char entrega, float valorTotal, Cliente cliente) {
         this.data = data;
         this.entrega = entrega;

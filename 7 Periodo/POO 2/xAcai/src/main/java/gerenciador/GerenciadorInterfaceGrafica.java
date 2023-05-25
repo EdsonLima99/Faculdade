@@ -12,12 +12,25 @@ import interfaces.ClientesPorBairro;
 import interfaces.ClientesPorNome;
 import interfaces.FramePrincipal;
 import interfaces.PesquisarAcai;
+import interfaces.PesquisarCliente;
 import java.awt.Frame;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.Iterator;
+import java.util.List;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 import modelo.Acai;
+import modelo.Cliente;
+import modelo.Tamanho;
+import modelo.TamanhoAcai;
+import org.hibernate.HibernateException;
 
 /**
  *
@@ -32,6 +45,7 @@ public class GerenciadorInterfaceGrafica {
     private ClientesPorNome clientesPorNome;
     private ClientesPorBairro clientesPorBairro;
     private PesquisarAcai pesquisarAcai;
+    private PesquisarCliente pesquisarCliente;
 
     GerenciadorDominio gerenciadorDominio;
 
@@ -43,10 +57,11 @@ public class GerenciadorInterfaceGrafica {
         clientesPorNome = null;
         clientesPorBairro = null;
         pesquisarAcai = null;
+        pesquisarCliente = null;
 
         try {
             gerenciadorDominio = new GerenciadorDominio();
-        } catch (ClassNotFoundException | SQLException ex) {
+        } catch (HibernateException ex) {
             JOptionPane.showMessageDialog(framePrincipal, ex);
             System.exit(1);
         }
@@ -100,17 +115,83 @@ public class GerenciadorInterfaceGrafica {
         pesquisarAcai = (PesquisarAcai) abrirJanela(framePrincipal, pesquisarAcai, PesquisarAcai.class);
         return pesquisarAcai.getAcaiSelecionado();
     }
+    
+    public Cliente abrirJanelaPesquisarCliente() {
+        pesquisarCliente = (PesquisarCliente) abrirJanela(framePrincipal, pesquisarCliente, PesquisarCliente.class);
+        return pesquisarCliente.getClienteSelecionado();
+    }
 
-//
-//    public void carregarComboTamanho(JComboBox combo) {
-//        List<Tamanho> lista;
-//        try {
-//            lista = gerenciadorDominio.listarTamanho();
-//            combo.setModel(new DefaultComboBoxModel(lista.toArray()));
-//        } catch (ClassNotFoundException | SQLException ex) {
-//            JOptionPane.showMessageDialog(framePrincipal, "Erro ao carregar tamanho. " + ex);
-//        }
-//    }
+    public void carregarCombo(JComboBox combo, Class classe) {
+        List lista;
+        try {
+            lista = gerenciadorDominio.listar(classe);
+            combo.setModel(new DefaultComboBoxModel(lista.toArray()));
+        } catch (HibernateException ex) {
+            JOptionPane.showMessageDialog(framePrincipal, "Erro ao carregar. " + ex);
+        }
+    }
+    
+    public void carregarComboAcai(JComboBox combo) {
+        List lista;
+        try {
+            lista = gerenciadorDominio.listarAcaiDistinct();
+            combo.setModel(new DefaultComboBoxModel(lista.toArray()));
+        } catch (HibernateException ex) {
+            JOptionPane.showMessageDialog(framePrincipal, "Erro ao carregar. " + ex);
+        }
+    }
+    
+    public void carregarComboTamanho(JComboBox combo, String nome) {
+        List lista;
+        try {
+            lista = gerenciadorDominio.listarTamanhosAcai(nome);
+            combo.setModel(new DefaultComboBoxModel(lista.toArray()));
+        } catch (HibernateException ex) {
+            JOptionPane.showMessageDialog(framePrincipal, "Erro ao carregar. " + ex);
+        }
+    }
+    
+    public void carregarTabelaAcai(JTable tabela, Class classe){
+        try {
+            // TODO add your handling code here:
+            List<TamanhoAcai> lista = getGerenciadorDominio().listar(classe);
+
+            //Limpar a tabela
+            ((DefaultTableModel) tabela.getModel()).setRowCount(0);
+
+            for (TamanhoAcai tamanhoAcai : lista) {
+                ((DefaultTableModel) tabela.getModel()).addRow(tamanhoAcai.toArray());
+            }
+        } catch (HibernateException | ParseException ex) {
+            JOptionPane.showMessageDialog(framePrincipal, "Erro ao listar açaí. " + ex);
+        }
+    }
+    
+    public void carregarTabelaCliente(JTable tabela, Class classe){
+        try {
+            // TODO add your handling code here:
+            List<Cliente> lista = getGerenciadorDominio().listar(classe);
+
+            //Limpar a tabela
+            ((DefaultTableModel) tabela.getModel()).setRowCount(0);
+
+            for (Cliente cliente : lista) {
+                ((DefaultTableModel) tabela.getModel()).addRow(cliente.toArray());
+            }
+        } catch (HibernateException | ParseException ex) {
+            JOptionPane.showMessageDialog(framePrincipal, "Erro ao listar cliente. " + ex);
+        }
+    }
+    
+    public Float obterValorAcaiPorNomeETamanho(String nome, String tamanho) {
+        Float valor = Float.parseFloat("0");
+        try {
+            valor = gerenciadorDominio.obterValorAcaiPorNomeETamanho(nome, tamanho);
+        } catch (HibernateException ex) {
+            JOptionPane.showMessageDialog(framePrincipal, "Erro ao carregar. " + ex);
+        }
+        return valor;
+    }
 
     /**
      * @param args the command line arguments

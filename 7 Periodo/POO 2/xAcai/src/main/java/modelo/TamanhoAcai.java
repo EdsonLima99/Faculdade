@@ -6,9 +6,9 @@ package modelo;
 
 import java.io.Serializable;
 import java.text.ParseException;
-import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -32,24 +32,21 @@ public class TamanhoAcai implements Serializable {
     @Column(name = "valor", nullable = false)
     private float valor;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "idAcai", nullable = false)
     private Acai acai;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "idTamanho", nullable = false)
     private Tamanho tamanho;
-
-//    @OneToMany(mappedBy = "itemPedidoPK.tamanhoAcai")
-//    private List<ItemPedido> itemPedido;
 
     public TamanhoAcai() {
     }
 
-    public TamanhoAcai(float valor, Acai acai, Tamanho tamanho) {
-        this.valor = valor;
+    public TamanhoAcai(Acai acai, Tamanho tamanho, float valor) {
         this.acai = acai;
         this.tamanho = tamanho;
+        this.valor = valor;
     }
 
     public int getId() {
@@ -84,19 +81,7 @@ public class TamanhoAcai implements Serializable {
         this.tamanho = tamanho;
     }
 
-//    public List<ItemPedido> getItemPedido() {
-//        return itemPedido;
-//    }
-//
-//    public void setItemPedido(List<ItemPedido> itemPedido) {
-//        this.itemPedido = itemPedido;
-//    }
-
-//    @Override;
-//    public String toString() {
-//        return "TamanhoAcai{" + "valor=" + valor + ", acai=" + acai + ", tamanho=" + tamanho + '}';
-//    }
     public Object[] toArray() throws ParseException {
-        return new Object[]{this};
+        return new Object[]{acai.getNome(), tamanho.getTamanho(), valor};
     }
 }

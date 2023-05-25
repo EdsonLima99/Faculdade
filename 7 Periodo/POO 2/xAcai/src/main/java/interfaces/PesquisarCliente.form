@@ -63,7 +63,7 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="Lista de A&#xe7;a&#xed;"/>
+            <TitledBorder title="Lista de Clientes"/>
           </Border>
         </Property>
       </Properties>
@@ -82,16 +82,46 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
           <SubComponents>
-            <Component class="javax.swing.JTable" name="tblAcai">
+            <Component class="javax.swing.JTable" name="tblCliente">
               <Properties>
                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                  <Table columnCount="2" rowCount="0">
+                  <Table columnCount="7" rowCount="0">
                     <Column editable="false" title="Nome" type="java.lang.Object"/>
-                    <Column editable="false" title="Valor" type="java.lang.Object"/>
+                    <Column editable="false" title="Sexo" type="java.lang.Object"/>
+                    <Column editable="false" title="Endere&#xe7;o" type="java.lang.Object"/>
+                    <Column editable="false" title="N&#xfa;mero" type="java.lang.Object"/>
+                    <Column editable="false" title="Bairro" type="java.lang.Object"/>
+                    <Column editable="false" title="Cidade" type="java.lang.Object"/>
+                    <Column editable="false" title="Celular" type="java.lang.Object"/>
                   </Table>
                 </Property>
                 <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
                   <TableColumnModel selectionModel="0">
+                    <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                      <Title/>
+                      <Editor/>
+                      <Renderer/>
+                    </Column>
+                    <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                      <Title/>
+                      <Editor/>
+                      <Renderer/>
+                    </Column>
+                    <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                      <Title/>
+                      <Editor/>
+                      <Renderer/>
+                    </Column>
+                    <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                      <Title/>
+                      <Editor/>
+                      <Renderer/>
+                    </Column>
+                    <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                      <Title/>
+                      <Editor/>
+                      <Renderer/>
+                    </Column>
                     <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
                       <Title/>
                       <Editor/>
@@ -183,9 +213,10 @@
     <Component class="javax.swing.JComboBox" name="cmbTipo">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-          <StringArray count="2">
+          <StringArray count="3">
             <StringItem index="0" value="Nome"/>
-            <StringItem index="1" value="Valor"/>
+            <StringItem index="1" value="Telefone"/>
+            <StringItem index="2" value="N&#xfa;mero"/>
           </StringArray>
         </Property>
       </Properties>
