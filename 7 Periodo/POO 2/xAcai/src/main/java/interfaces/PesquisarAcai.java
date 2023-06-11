@@ -1,9 +1,11 @@
 package interfaces;
 
+import gerenciador.FuncoesUteis;
 import gerenciador.GerenciadorInterfaceGrafica;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import modelo.Acai;
+import modelo.Tamanho;
 import modelo.TamanhoAcai;
 import org.hibernate.HibernateException;
 
@@ -18,11 +20,11 @@ import org.hibernate.HibernateException;
 public class PesquisarAcai extends javax.swing.JDialog {
 
     private GerenciadorInterfaceGrafica gerenciadorInterfaceGrafica;
-    private Acai acaiSelecionado;
     private TamanhoAcai tamanhoAcaiSelecionado;
 
     /**
      * Creates new form ClientesPorNome
+     *
      * @param parent
      * @param modal
      * @param gerenciadoInterfaceGrafica
@@ -31,7 +33,6 @@ public class PesquisarAcai extends javax.swing.JDialog {
         super(parent, modal);
         this.gerenciadorInterfaceGrafica = gerenciadoInterfaceGrafica;
         initComponents();
-        acaiSelecionado = null;
         tamanhoAcaiSelecionado = null;
     }
 
@@ -56,6 +57,11 @@ public class PesquisarAcai extends javax.swing.JDialog {
         cmbTipo = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                formComponentShown(evt);
+            }
+        });
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Lista de Açaí"));
         jPanel2.setLayout(new java.awt.BorderLayout());
@@ -169,12 +175,13 @@ public class PesquisarAcai extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    public Acai getAcaiSelecionado() {
-        return acaiSelecionado;
+    public TamanhoAcai getTamanhoAcaiSelecionado() {
+        return tamanhoAcaiSelecionado;
     }
 
     private void btnPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisarActionPerformed
-        gerenciadorInterfaceGrafica.carregarTabelaAcai(tblAcai, TamanhoAcai.class);
+        FuncoesUteis.limparTabela(tblAcai);
+        gerenciadorInterfaceGrafica.carregarTabelaAcai(tblAcai, cmbTipo.getSelectedIndex(), txtPesquisar.getText());
     }//GEN-LAST:event_btnPesquisarActionPerformed
 
     private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
@@ -183,8 +190,8 @@ public class PesquisarAcai extends javax.swing.JDialog {
 
         try {
             if (linha >= 0) {
-                TamanhoAcai tamanhoAcai = gerenciadorInterfaceGrafica.getGerenciadorDominio().listarTamanhoAcai((Float) tblAcai.getValueAt(linha, 2));
-                gerenciadorInterfaceGrafica.getGerenciadorDominio().excluir(tamanhoAcai);
+                TamanhoAcai tamanhoAcai = gerenciadorInterfaceGrafica.getGerenciadorDominio().buscarTamanhoAcaiPorAcaiETamanho((Acai) tblAcai.getValueAt(linha, 0), (Tamanho) tblAcai.getValueAt(linha, 1));
+                gerenciadorInterfaceGrafica.excluirTamanhoAcai(tamanhoAcai);
                 ((DefaultTableModel) tblAcai.getModel()).removeRow(linha);
                 JOptionPane.showMessageDialog(this, "Açaí excluído com sucesso!");
             } else {
@@ -200,7 +207,7 @@ public class PesquisarAcai extends javax.swing.JDialog {
         int linha = tblAcai.getSelectedRow();
 
         if (linha >= 0) {
-            acaiSelecionado = (Acai) tblAcai.getValueAt(linha, 0);
+            tamanhoAcaiSelecionado = gerenciadorInterfaceGrafica.getGerenciadorDominio().buscarTamanhoAcaiPorAcaiETamanho((Acai) tblAcai.getValueAt(linha, 0), (Tamanho) tblAcai.getValueAt(linha, 1));
             this.dispose();
         } else {
             JOptionPane.showMessageDialog(this, "Selecione um açaí.");
@@ -209,9 +216,14 @@ public class PesquisarAcai extends javax.swing.JDialog {
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         // TODO add your handling code here:
-        acaiSelecionado = null;
+        tamanhoAcaiSelecionado = null;
         this.dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
+
+    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+        // TODO add your handling code here:
+        FuncoesUteis.limparTabela(tblAcai);
+    }//GEN-LAST:event_formComponentShown
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;

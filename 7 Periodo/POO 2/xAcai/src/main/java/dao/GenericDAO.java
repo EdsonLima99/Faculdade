@@ -64,9 +64,6 @@ public class GenericDAO {
             sessao = ConexaoHibernate.getSessionFactory().openSession();
             sessao.getTransaction().begin();
 
-            //Criteria consulta = sessao.createCriteria(classe);
-            //lista = consulta.list();
-            // Create CriteriaQuery
             CriteriaQuery<Class> consulta = sessao.getCriteriaBuilder().createQuery(classe);
             consulta.from(classe);
 
@@ -102,23 +99,23 @@ public class GenericDAO {
             throw new HibernateException(ex);
         }
     }
-    
+
     // -----------------------------------------------
     // Se não existir no banco retorna NULL
     // -----------------------------------------------
     public Object get(Class classe, int id) throws HibernateException {
         Session sessao = null;
         Object objReturn = null;
-        try   {
-          sessao = ConexaoHibernate.getSessionFactory().openSession();
-          sessao.getTransaction().begin();
+        try {
+            sessao = ConexaoHibernate.getSessionFactory().openSession();
+            sessao.getTransaction().begin();
 
-          objReturn = sessao.get(classe, id );
+            objReturn = sessao.get(classe, id);
 
-          sessao.getTransaction().commit();
-          sessao.close();
-        } catch ( HibernateException ex) {
-            if ( sessao != null) {
+            sessao.getTransaction().commit();
+            sessao.close();
+        } catch (HibernateException ex) {
+            if (sessao != null) {
                 sessao.getTransaction().rollback();
                 sessao.close();
             }
@@ -127,8 +124,7 @@ public class GenericDAO {
         return objReturn;
 
     }
-    
-    
+
     // -----------------------------------------------------
     //  Se não existir no banco, retorna uma EXCEÇÃO
     // ----------------------------------------------------
@@ -141,17 +137,17 @@ public class GenericDAO {
     public Object load(Class classe, int id) throws HibernateException {
         Session sessao = null;
         Object objReturn = null;
-        try   {
-          sessao = ConexaoHibernate.getSessionFactory().openSession();
-          sessao.getTransaction().begin();
+        try {
+            sessao = ConexaoHibernate.getSessionFactory().openSession();
+            sessao.getTransaction().begin();
 
-          objReturn = sessao.load(classe, id );
-          objReturn.toString();
+            objReturn = sessao.load(classe, id);
+            objReturn.toString();
 
-          sessao.getTransaction().commit();
-          sessao.close();
-        } catch ( HibernateException ex) {
-            if ( sessao != null) {
+            sessao.getTransaction().commit();
+            sessao.close();
+        } catch (HibernateException ex) {
+            if (sessao != null) {
                 sessao.getTransaction().rollback();
                 sessao.close();
             }

@@ -5,9 +5,11 @@
 package dao;
 
 import java.util.List;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import modelo.Cliente;
-import modelo.Pedido;
-import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
@@ -16,49 +18,124 @@ import org.hibernate.Session;
  * @author CONEXOS
  */
 public class ClienteDAO extends GenericDAO {
-    
-    // Carregar a lista de PEDIDOS de um CLIENTE
-    public void carregarPedidos(Cliente cliente) {
+
+    public List<Cliente> pesquisarPorNome(String nome) throws HibernateException {
         Session sessao = null;
-        
+        List<Cliente> lista = null;
+
         try {
-                               
             sessao = ConexaoHibernate.getSessionFactory().openSession();
-            sessao.beginTransaction();
+            sessao.getTransaction().begin();
 
-            // Verifica se a lista JÁ FOI CARREGADA
-            if ( !Hibernate.isInitialized( cliente.getPedido() ) ) {
-                
-                // Carrega o PROXY para outro objeto
-                Cliente clienteTemporario = sessao.get(Cliente.class, cliente.getId());
+            CriteriaBuilder builder = sessao.getCriteriaBuilder();
+            CriteriaQuery<Cliente> consulta = builder.createQuery(Cliente.class);
+            Root<Cliente> root = consulta.from(Cliente.class);
 
-                // Carrega a lista de PEDIDOS
-                List<Pedido> lista = clienteTemporario.getPedido();
-                lista.size();
+            Predicate predicado = builder.like(root.get("nome"), "%" + nome + "%");
 
-                // Atualiza a lista no OBJETO principal (parâmetro)
-                cliente.setPedido(lista);
-            }
-            
-            
-            sessao.getTransaction().commit();              
+            consulta.select(root).where(predicado).orderBy(builder.asc(root.get("nome")));
+
+            lista = sessao.createQuery(consulta).getResultList();
+
+            sessao.getTransaction().commit();
             sessao.close();
-        } catch( HibernateException erro) {
-            if ( sessao != null ){
+        } catch (HibernateException ex) {
+            if (sessao != null) {
                 sessao.getTransaction().rollback();
                 sessao.close();
             }
-            throw new HibernateException(erro);
+            throw new HibernateException(ex);
         }
-        
-    }
-    
-    public List<Cliente> pesquisarPorNome(String string) throws HibernateException {
-    return listar(Cliente.class);
-    //return null;
+        return lista;
     }
 
-    public List<Cliente> pesquisarPorValor(String string) throws HibernateException {
-        return null;
+    public List<Cliente> pesquisarPorBairro(String bairro) throws HibernateException {
+        Session sessao = null;
+        List<Cliente> lista = null;
+
+        try {
+            sessao = ConexaoHibernate.getSessionFactory().openSession();
+            sessao.getTransaction().begin();
+
+            CriteriaBuilder builder = sessao.getCriteriaBuilder();
+            CriteriaQuery<Cliente> consulta = builder.createQuery(Cliente.class);
+            Root<Cliente> root = consulta.from(Cliente.class);
+
+            Predicate predicado = builder.like(root.get("bairro"), "%" + bairro + "%");
+
+            consulta.select(root).where(predicado).orderBy(builder.asc(root.get("bairro")));
+
+            lista = sessao.createQuery(consulta).getResultList();
+
+            sessao.getTransaction().commit();
+            sessao.close();
+        } catch (HibernateException ex) {
+            if (sessao != null) {
+                sessao.getTransaction().rollback();
+                sessao.close();
+            }
+            throw new HibernateException(ex);
+        }
+        return lista;
+    }
+
+    public List<Cliente> pesquisarPorCidade(String cidade) throws HibernateException {
+        Session sessao = null;
+        List<Cliente> lista = null;
+
+        try {
+            sessao = ConexaoHibernate.getSessionFactory().openSession();
+            sessao.getTransaction().begin();
+
+            CriteriaBuilder builder = sessao.getCriteriaBuilder();
+            CriteriaQuery<Cliente> consulta = builder.createQuery(Cliente.class);
+            Root<Cliente> root = consulta.from(Cliente.class);
+
+            Predicate predicado = builder.like(root.get("cidade"), "%" + cidade + "%");
+
+            consulta.select(root).where(predicado).orderBy(builder.asc(root.get("cidade")));
+
+            lista = sessao.createQuery(consulta).getResultList();
+
+            sessao.getTransaction().commit();
+            sessao.close();
+        } catch (HibernateException ex) {
+            if (sessao != null) {
+                sessao.getTransaction().rollback();
+                sessao.close();
+            }
+            throw new HibernateException(ex);
+        }
+        return lista;
+    }
+
+    public List<Cliente> pesquisarPorSexo(char sexo) throws HibernateException {
+        Session sessao = null;
+        List<Cliente> lista = null;
+
+        try {
+            sessao = ConexaoHibernate.getSessionFactory().openSession();
+            sessao.getTransaction().begin();
+
+            CriteriaBuilder builder = sessao.getCriteriaBuilder();
+            CriteriaQuery<Cliente> consulta = builder.createQuery(Cliente.class);
+            Root<Cliente> root = consulta.from(Cliente.class);
+
+            Predicate predicado = builder.equal(root.get("sexo"), Character.toUpperCase(sexo));
+
+            consulta.select(root).where(predicado).orderBy(builder.asc(root.get("sexo")));
+
+            lista = sessao.createQuery(consulta).getResultList();
+
+            sessao.getTransaction().commit();
+            sessao.close();
+        } catch (HibernateException ex) {
+            if (sessao != null) {
+                sessao.getTransaction().rollback();
+                sessao.close();
+            }
+            throw new HibernateException(ex);
+        }
+        return lista;
     }
 }

@@ -4,10 +4,14 @@
  */
 package dao;
 
+import java.util.List;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import modelo.Acai;
+import modelo.Cliente;
+import modelo.Pedido;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
@@ -15,22 +19,24 @@ import org.hibernate.Session;
  *
  * @author CONEXOS
  */
-public class AcaiDAO extends GenericDAO {
+public class PedidoDAO extends GenericDAO {
 
-    public Acai pesquisarNome(String nome) throws HibernateException {
+    public List<Pedido> listarPedidoPorCliente(Cliente cliente) throws HibernateException {
         Session sessao = null;
-        Acai acai = null;
+        List<Pedido> lista = null;
 
         try {
             sessao = ConexaoHibernate.getSessionFactory().openSession();
             sessao.getTransaction().begin();
 
             CriteriaBuilder builder = sessao.getCriteriaBuilder();
-            CriteriaQuery<Acai> consulta = builder.createQuery(Acai.class);
-            Root<Acai> root = consulta.from(Acai.class);
-            consulta.select(root).where(builder.equal(root.get("nome"), nome));
+            CriteriaQuery<Pedido> consulta = builder.createQuery(Pedido.class);
+            Root<Pedido> root = consulta.from(Pedido.class);
+            Join<Pedido, Cliente> joinCliente = root.join("cliente");
+            Predicate predicate = builder.equal(joinCliente.get("id"), cliente.getId());
+            consulta.select(root).where(predicate);
 
-            acai = sessao.createQuery(consulta).uniqueResult();
+            lista = sessao.createQuery(consulta).getResultList();
 
             sessao.getTransaction().commit();
             sessao.close();
@@ -41,6 +47,6 @@ public class AcaiDAO extends GenericDAO {
             }
             throw new HibernateException(ex);
         }
-        return acai;
+        return lista;
     }
 }

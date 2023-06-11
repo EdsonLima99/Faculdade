@@ -6,8 +6,8 @@ package modelo;
 
 import java.io.Serializable;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -15,6 +15,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.PreRemove;
 import javax.persistence.Table;
 
 /**
@@ -31,15 +32,16 @@ public class Acai implements Serializable {
 
     @Column(name = "nome", nullable = false)
     private String nome;
-    
-    @OneToMany (mappedBy = "tamanho", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+
+    @OneToMany(mappedBy = "tamanho", fetch = FetchType.EAGER)
     private List<TamanhoAcai> tamanhoAcai;
-    
+
     public Acai() {
     }
 
     public Acai(String nome) {
         this.nome = nome;
+        this.tamanhoAcai = new ArrayList<>(); // Inicializa a lista de pedidos vazia
     }
 
     public int getId() {
@@ -73,5 +75,19 @@ public class Acai implements Serializable {
 
     public Object[] toArray() throws ParseException {
         return new Object[]{this};
+    }
+
+    @PreRemove
+    public void preRemove() {
+        for (TamanhoAcai tamanhoAcais : tamanhoAcai) {
+            tamanhoAcais.setAcai(null);
+        }
+    }
+
+    public void addTamanhoAcai(TamanhoAcai tamanhoAcai) {
+        if (tamanhoAcai != null) {
+            tamanhoAcai.setAcai(this); // Configura o cliente para o pedido
+            this.tamanhoAcai.add(tamanhoAcai); // Adiciona o pedido à lista de pedidos do cliente
+        }
     }
 }

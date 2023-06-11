@@ -4,6 +4,7 @@
  */
 package interfaces;
 
+import gerenciador.FuncoesUteis;
 import gerenciador.GerenciadorInterfaceGrafica;
 
 /**
@@ -16,6 +17,10 @@ public class ClientesPorBairro extends javax.swing.JDialog {
 
     /**
      * Creates new form ClientesPorData
+     *
+     * @param parent
+     * @param modal
+     * @param gerenciadoInterfaceGrafica
      */
     public ClientesPorBairro(java.awt.Frame parent, boolean modal, GerenciadorInterfaceGrafica gerenciadoInterfaceGrafica) {
         super(parent, modal);
@@ -37,6 +42,11 @@ public class ClientesPorBairro extends javax.swing.JDialog {
         tblClientes = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                formComponentShown(evt);
+            }
+        });
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Lista de Clientes"));
         jPanel2.setLayout(new java.awt.BorderLayout());
@@ -46,11 +56,11 @@ public class ClientesPorBairro extends javax.swing.JDialog {
 
             },
             new String [] {
-                "Nome", "Data de Nascimento", "Sexo", "Endereço", "Número", "Bairro", "Cidade", "Celular"
+                "Nome", "Sexo", "Endereço", "Número", "Bairro", "Cidade", "Celular"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -80,6 +90,12 @@ public class ClientesPorBairro extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+        // TODO add your handling code here:
+        FuncoesUteis.limparTabela(tblClientes);
+        gerenciadoInterfaceGrafica.carregarTabelaCliente(tblClientes, 1, "");
+    }//GEN-LAST:event_formComponentShown
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel jPanel2;

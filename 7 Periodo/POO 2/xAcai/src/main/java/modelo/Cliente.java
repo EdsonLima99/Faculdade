@@ -6,6 +6,7 @@ package modelo;
 
 import java.io.Serializable;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,6 +15,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.PreRemove;
 import javax.persistence.Table;
 
 /**
@@ -50,7 +52,7 @@ public class Cliente implements Serializable {
     @Column(name = "celular", nullable = false)
     private String celular;
 
-    @OneToMany(mappedBy = "cliente", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "cliente", fetch = FetchType.EAGER)
     private List<Pedido> pedido;
 
     public Cliente() {
@@ -64,6 +66,7 @@ public class Cliente implements Serializable {
         this.bairro = bairro;
         this.cidade = cidade;
         this.celular = celular;
+        this.pedido = new ArrayList<>(); // Inicializa a lista de pedidos vazia
     }
 
     public int getId() {
@@ -145,5 +148,19 @@ public class Cliente implements Serializable {
 
     public Object[] toArray() throws ParseException {
         return new Object[]{this, sexo, endereco, numero, bairro, cidade, celular};
+    }
+
+    @PreRemove
+    public void preRemove() {
+        for (Pedido pedidos : pedido) {
+            pedidos.setCliente(null);
+        }
+    }
+
+    public void addPedido(Pedido pedido) {
+        if (pedido != null) {
+            pedido.setCliente(this); // Configura o cliente para o pedido
+            this.pedido.add(pedido); // Adiciona o pedido à lista de pedidos do cliente
+        }
     }
 }

@@ -1,14 +1,8 @@
 package interfaces;
 
+import gerenciador.FuncoesUteis;
 import gerenciador.GerenciadorInterfaceGrafica;
-import java.sql.SQLException;
-import java.text.ParseException;
-import java.util.List;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
 import modelo.Cliente;
 import org.hibernate.HibernateException;
 
@@ -27,22 +21,16 @@ public class PesquisarCliente extends javax.swing.JDialog {
 
     /**
      * Creates new form ClientesPorNome
+     *
+     * @param parent
+     * @param modal
+     * @param gerenciadoInterfaceGrafica
      */
     public PesquisarCliente(java.awt.Frame parent, boolean modal, GerenciadorInterfaceGrafica gerenciadoInterfaceGrafica) {
         super(parent, modal);
         this.gerenciadorInterfaceGrafica = gerenciadoInterfaceGrafica;
         initComponents();
         clienteSelecionado = null;
-
-        // Para colocar um FOTO em UMA CELULA DA TABELA
-//        tblCliente.getColumnModel().getColumn(5).setCellRenderer((JTable jtable, Object o, boolean bln, boolean bln1, int i, int i1) -> {
-//            // OBJETO FINAL
-//            JLabel label = new JLabel();
-//            if (o != null) {
-//                label.setIcon(new ImageIcon((byte[]) o));
-//            }
-//            return label;
-//        });
     }
 
     /**
@@ -66,6 +54,11 @@ public class PesquisarCliente extends javax.swing.JDialog {
         cmbTipo = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                formComponentShown(evt);
+            }
+        });
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Lista de Clientes"));
         jPanel2.setLayout(new java.awt.BorderLayout());
@@ -142,7 +135,7 @@ public class PesquisarCliente extends javax.swing.JDialog {
                 .addContainerGap(19, Short.MAX_VALUE))
         );
 
-        cmbTipo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Nome", "Telefone", "Número" }));
+        cmbTipo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Nome", "Bairro", "Cidade", "Sexo" }));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -184,7 +177,8 @@ public class PesquisarCliente extends javax.swing.JDialog {
     }
 
     private void btnPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisarActionPerformed
-        gerenciadorInterfaceGrafica.carregarTabelaCliente(tblCliente, Cliente.class);
+        FuncoesUteis.limparTabela(tblCliente);
+        gerenciadorInterfaceGrafica.carregarTabelaCliente(tblCliente, cmbTipo.getSelectedIndex(), txtPesquisar.getText());
     }//GEN-LAST:event_btnPesquisarActionPerformed
 
     private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
@@ -194,7 +188,7 @@ public class PesquisarCliente extends javax.swing.JDialog {
         try {
             if (linha >= 0) {
                 Cliente cliente = (Cliente) tblCliente.getValueAt(linha, 0);
-                gerenciadorInterfaceGrafica.getGerenciadorDominio().excluir(cliente);
+                gerenciadorInterfaceGrafica.excluirCliente(cliente);
                 gerenciadorInterfaceGrafica.carregarTabelaCliente(tblCliente, Cliente.class);
                 JOptionPane.showMessageDialog(this, "Cliente excluído com sucesso!");
             } else {
@@ -203,7 +197,6 @@ public class PesquisarCliente extends javax.swing.JDialog {
         } catch (HibernateException ex) {
             JOptionPane.showMessageDialog(this, "Erro ao excluir cliente. " + ex);
         }
-
     }//GEN-LAST:event_btnExcluirActionPerformed
 
     private void btnSelecionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelecionarActionPerformed
@@ -223,6 +216,11 @@ public class PesquisarCliente extends javax.swing.JDialog {
         clienteSelecionado = null;
         this.dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
+
+    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+        // TODO add your handling code here:
+        FuncoesUteis.limparTabela(tblCliente);
+    }//GEN-LAST:event_formComponentShown
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;

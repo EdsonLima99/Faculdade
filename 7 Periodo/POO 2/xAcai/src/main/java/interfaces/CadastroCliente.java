@@ -308,6 +308,7 @@ public class CadastroCliente extends javax.swing.JDialog {
 
                 gerenciadorInterfaceGrafica.carregarTabelaCliente(tblClientes, Cliente.class);
                 limparCampos();
+                nomeBotao();
             } catch (HibernateException ex) {
                 JOptionPane.showMessageDialog(this, "Erro ao inserir cliente.");
             }
@@ -321,7 +322,7 @@ public class CadastroCliente extends javax.swing.JDialog {
             if (linha >= 0) {
                 Cliente cliente = (Cliente) tblClientes.getValueAt(linha, 0);
                 if (JOptionPane.showConfirmDialog(this, "Deseja excluir esse cliente?") == JOptionPane.YES_OPTION) {
-                    gerenciadorInterfaceGrafica.getGerenciadorDominio().excluir(cliente);
+                    gerenciadorInterfaceGrafica.excluirCliente(cliente);
                     gerenciadorInterfaceGrafica.carregarTabelaCliente(tblClientes, Cliente.class);
                 }
             } else {
@@ -334,8 +335,11 @@ public class CadastroCliente extends javax.swing.JDialog {
 
     private void btnPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisarActionPerformed
         // TODO add your handling code here:
+        limparCampos();
         clienteSelecionado = gerenciadorInterfaceGrafica.abrirJanelaPesquisarCliente();
-        preencherCampos(clienteSelecionado);
+        gerenciadorInterfaceGrafica.carregarTabelaCliente(tblClientes, Cliente.class);
+        nomeBotao();
+        preencherCampos();
     }//GEN-LAST:event_btnPesquisarActionPerformed
 
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
@@ -357,12 +361,12 @@ public class CadastroCliente extends javax.swing.JDialog {
             msgErro = msgErro + "Digite seu NOME.\n";
             lblNome.setForeground(Color.red);
         }
-        
+
         if (txtEndereço.getText().isEmpty()) {
             msgErro = msgErro + "Digite seu ENDEREÇO.\n";
             lblEndereco.setForeground(Color.red);
         }
-        
+
         if (txtNumero.getText().isEmpty()) {
             msgErro = msgErro + "Digite seu NÚMERO.\n";
             lblNumero.setForeground(Color.red);
@@ -374,17 +378,17 @@ public class CadastroCliente extends javax.swing.JDialog {
                 lblNumero.setForeground(Color.red);
             }
         }
-        
+
         if (txtBairro.getText().isEmpty()) {
             msgErro = msgErro + "Digite seu BAIRRO.\n";
             lblBairro.setForeground(Color.red);
         }
-        
+
         if (txtCidade.getText().isEmpty()) {
             msgErro = msgErro + "Digite seu CIDADE.\n";
             lblCidade.setForeground(Color.red);
         }
-        
+
         if (txtCelular.getText().isEmpty()) {
             msgErro = msgErro + "Digite seu CELULAR.\n";
             lblCelular.setForeground(Color.red);
@@ -398,7 +402,7 @@ public class CadastroCliente extends javax.swing.JDialog {
         }
     }
 
-    private void preencherCampos(Cliente clienteSelecionado) {
+    private void preencherCampos() {
         if (clienteSelecionado != null) {
             txtNome.setText(clienteSelecionado.getNome());
             txtEndereço.setText(clienteSelecionado.getEndereco());

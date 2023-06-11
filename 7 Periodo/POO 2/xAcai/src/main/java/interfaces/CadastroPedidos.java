@@ -12,8 +12,6 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import modelo.Acai;
 import modelo.Cliente;
-import modelo.ItemPedido;
-import modelo.Pedido;
 import modelo.Tamanho;
 import modelo.TamanhoAcai;
 import org.hibernate.HibernateException;
@@ -354,6 +352,10 @@ public class CadastroPedidos extends javax.swing.JDialog {
         int linha = tblPedidos.getSelectedRow();
         if (linha >= 0) {
             if (JOptionPane.showConfirmDialog(this, "Deseja excluir esse pedido?") == JOptionPane.YES_OPTION) {
+                TamanhoAcai tamanhoAcai = gerenciadorInterfaceGrafica.getGerenciadorDominio().buscarTamanhoAcaiPorAcaiETamanho((Acai) cmbAcai.getSelectedItem(), (Tamanho) cmbTamanho.getSelectedItem());
+                Double valor = tamanhoAcai.getValor();
+                int qtd = Integer.parseInt(spnQtd.getValue().toString());
+                txtPreço.setText(String.valueOf(Double.parseDouble(txtPreço.getText()) - (valor * qtd)));
                 ((DefaultTableModel) tblPedidos.getModel()).removeRow(linha);
             }
         }
@@ -363,9 +365,9 @@ public class CadastroPedidos extends javax.swing.JDialog {
         // TODO add your handling code here:
         if (validarCampos()) {
             String nome = txtNome.getText();
-            String acai = cmbAcai.getSelectedItem().toString();
+            Acai acai = (Acai) cmbAcai.getSelectedItem();
             int qtd = Integer.parseInt(spnQtd.getValue().toString());
-            String tamanho = cmbTamanho.getSelectedItem().toString();
+            Tamanho tamanho = (Tamanho) cmbTamanho.getSelectedItem();
             String morango = null;
             String banana = null;
             String cereja = null;
@@ -376,7 +378,7 @@ public class CadastroPedidos extends javax.swing.JDialog {
             String pacoca = null;
             String chocoball = null;
             char entrega;
-            Float valor;
+            Double valor;
 
             morango = selecionado(cbxMorango, morango);
             banana = selecionado(cbxBanana, banana);
@@ -393,21 +395,24 @@ public class CadastroPedidos extends javax.swing.JDialog {
             } else {
                 entrega = 'N';
             }
-            valor = gerenciadorInterfaceGrafica.obterValorAcaiPorNomeETamanho(cmbAcai.getSelectedItem().toString(), cmbTamanho.getSelectedItem().toString());
-            
-            txtPreço.setText(String.valueOf(Float.parseFloat(txtPreço.getText()) + (valor * qtd)));
+
+            TamanhoAcai tamanhoAcai = gerenciadorInterfaceGrafica.getGerenciadorDominio().buscarTamanhoAcaiPorAcaiETamanho((Acai) cmbAcai.getSelectedItem(), (Tamanho) cmbTamanho.getSelectedItem());
+            valor = tamanhoAcai.getValor();
+
+            txtPreço.setText(String.valueOf(Double.parseDouble(txtPreço.getText()) + (valor * qtd)));
             adicionarTabela(nome, acai, qtd, tamanho, morango, banana, cereja, leiteCondensado, coberturaMorango, coberturaChocolate, leitePo, pacoca, chocoball, entrega, valor);
         }
     }//GEN-LAST:event_btnNovoActionPerformed
 
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
         // TODO add your handling code here:
-        gerenciadorInterfaceGrafica.carregarComboAcai(cmbAcai);
-        gerenciadorInterfaceGrafica.carregarComboTamanho(cmbTamanho, cmbAcai.getSelectedItem().toString());
+        gerenciadorInterfaceGrafica.carregarCombo(cmbAcai, Acai.class);
+        gerenciadorInterfaceGrafica.carregarComboTamanho(cmbTamanho, (Acai) cmbAcai.getSelectedItem());
     }//GEN-LAST:event_formComponentShown
 
     private void btnPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisarActionPerformed
         // TODO add your handling code here:
+        limparCampos();
         clienteSelecionado = gerenciadorInterfaceGrafica.abrirJanelaPesquisarCliente();
         if (clienteSelecionado != null) {
             txtNome.setText(clienteSelecionado.getNome());
@@ -416,13 +421,13 @@ public class CadastroPedidos extends javax.swing.JDialog {
 
     private void btnInserirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInserirActionPerformed
         // TODO add your handling code here:
-        if (clienteSelecionado != null) {
+        if (clienteSelecionado != null && tblPedidos.getRowCount() > 0) {
             try {
                 char entrega = (char) grpEntrega.getSelection().getMnemonic();
-                int id = gerenciadorInterfaceGrafica.getGerenciadorDominio().inserirPedido(clienteSelecionado, entrega, Float.parseFloat(txtPreço.getText()), tblPedidos);
+                int id = gerenciadorInterfaceGrafica.getGerenciadorDominio().inserirPedido(clienteSelecionado, entrega, Double.parseDouble(txtPreço.getText()), tblPedidos);
 
                 JOptionPane.showMessageDialog(this, "Pedido " + id + " inserido com sucesso!");
-                
+
                 limparCampos();
             } catch (HibernateException ex) {
                 JOptionPane.showMessageDialog(this, "Erro ao inserir pedido.");
@@ -434,7 +439,7 @@ public class CadastroPedidos extends javax.swing.JDialog {
 
     private void cmbAcaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbAcaiActionPerformed
         // TODO add your handling code here:
-        gerenciadorInterfaceGrafica.carregarComboTamanho(cmbTamanho, cmbAcai.getSelectedItem().toString());
+        gerenciadorInterfaceGrafica.carregarComboTamanho(cmbTamanho, (Acai) cmbAcai.getSelectedItem());
     }//GEN-LAST:event_cmbAcaiActionPerformed
 
     private String selecionado(JCheckBox cbx, String texto) {
@@ -457,12 +462,12 @@ public class CadastroPedidos extends javax.swing.JDialog {
             lblNome.setForeground(Color.red);
         }
 
-        if (cmbAcai.getSelectedItem().toString().isEmpty()) {
+        if (cmbAcai == null || cmbAcai.getSelectedItem() == null) {
             msgErro = msgErro + "Selecione um AÇAI.\n";
             lblAcai.setForeground(Color.red);
         }
 
-        if (cmbTamanho.getSelectedItem().toString().isEmpty()) {
+        if (cmbTamanho == null || cmbTamanho.getSelectedItem() == null) {
             msgErro = msgErro + "Selecione um Tamanho.\n";
             lblTamanho.setForeground(Color.red);
         }
@@ -478,8 +483,8 @@ public class CadastroPedidos extends javax.swing.JDialog {
     private void limparCampos() {
         clienteSelecionado = null;
         txtNome.setText("");
-        gerenciadorInterfaceGrafica.carregarComboAcai(cmbAcai);
-        gerenciadorInterfaceGrafica.carregarComboTamanho(cmbTamanho, cmbAcai.getSelectedItem().toString());
+        gerenciadorInterfaceGrafica.carregarCombo(cmbAcai, Acai.class);
+        gerenciadorInterfaceGrafica.carregarComboTamanho(cmbTamanho, (Acai) cmbAcai.getSelectedItem());
         spnQtd.setValue(1);
         cbxBanana.setSelected(false);
         cbxCereja.setSelected(false);
@@ -494,13 +499,13 @@ public class CadastroPedidos extends javax.swing.JDialog {
         txtPreço.setText("0.00");
         limparTabela();
     }
-    
+
     private void limparTabela() {
         //Criar uma linha me branco
         ((DefaultTableModel) tblPedidos.getModel()).setRowCount(0);
     }
 
-    private void adicionarTabela(String nome, String acai, int qtd, String tamanho, String morango, String banana, String cereja, String leiteCondensado, String coberturaMorango, String coberturaChocolate, String leitePo, String pacoca, String chocoball, char entrega, float valor) {
+    private void adicionarTabela(String nome, Acai acai, int qtd, Tamanho tamanho, String morango, String banana, String cereja, String leiteCondensado, String coberturaMorango, String coberturaChocolate, String leitePo, String pacoca, String chocoball, char entrega, Double valor) {
         //Criar uma linha me branco
         ((DefaultTableModel) tblPedidos.getModel()).addRow(new Object[15]);
         int linha = tblPedidos.getRowCount() - 1;

@@ -10,25 +10,24 @@ import interfaces.CadastroCliente;
 import interfaces.CadastroPedidos;
 import interfaces.ClientesPorBairro;
 import interfaces.ClientesPorNome;
+import interfaces.ConsultarPedido;
 import interfaces.FramePrincipal;
 import interfaces.PesquisarAcai;
 import interfaces.PesquisarCliente;
 import java.awt.Frame;
 import java.lang.reflect.InvocationTargetException;
-import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.Iterator;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import modelo.Acai;
 import modelo.Cliente;
-import modelo.Tamanho;
+import modelo.ItemPedido;
+import modelo.Pedido;
 import modelo.TamanhoAcai;
 import org.hibernate.HibernateException;
 
@@ -46,6 +45,7 @@ public class GerenciadorInterfaceGrafica {
     private ClientesPorBairro clientesPorBairro;
     private PesquisarAcai pesquisarAcai;
     private PesquisarCliente pesquisarCliente;
+    private ConsultarPedido consultarPedido;
 
     GerenciadorDominio gerenciadorDominio;
 
@@ -110,12 +110,16 @@ public class GerenciadorInterfaceGrafica {
     public void abrirJanelaConsultaClienteData() {
         abrirJanela(framePrincipal, clientesPorBairro, ClientesPorBairro.class);
     }
-    
-    public Acai abrirJanelaPesquisarAcai() {
-        pesquisarAcai = (PesquisarAcai) abrirJanela(framePrincipal, pesquisarAcai, PesquisarAcai.class);
-        return pesquisarAcai.getAcaiSelecionado();
+
+    public void abrirJanelaConsultarPedido() {
+        abrirJanela(framePrincipal, consultarPedido, ConsultarPedido.class);
     }
-    
+
+    public TamanhoAcai abrirJanelaPesquisarAcai() {
+        pesquisarAcai = (PesquisarAcai) abrirJanela(framePrincipal, pesquisarAcai, PesquisarAcai.class);
+        return pesquisarAcai.getTamanhoAcaiSelecionado();
+    }
+
     public Cliente abrirJanelaPesquisarCliente() {
         pesquisarCliente = (PesquisarCliente) abrirJanela(framePrincipal, pesquisarCliente, PesquisarCliente.class);
         return pesquisarCliente.getClienteSelecionado();
@@ -130,28 +134,18 @@ public class GerenciadorInterfaceGrafica {
             JOptionPane.showMessageDialog(framePrincipal, "Erro ao carregar. " + ex);
         }
     }
-    
-    public void carregarComboAcai(JComboBox combo) {
+
+    public void carregarComboTamanho(JComboBox combo, Acai acai) {
         List lista;
         try {
-            lista = gerenciadorDominio.listarAcaiDistinct();
+            lista = gerenciadorDominio.listarTamanhoPorAcai(acai);
             combo.setModel(new DefaultComboBoxModel(lista.toArray()));
         } catch (HibernateException ex) {
             JOptionPane.showMessageDialog(framePrincipal, "Erro ao carregar. " + ex);
         }
     }
-    
-    public void carregarComboTamanho(JComboBox combo, String nome) {
-        List lista;
-        try {
-            lista = gerenciadorDominio.listarTamanhosAcai(nome);
-            combo.setModel(new DefaultComboBoxModel(lista.toArray()));
-        } catch (HibernateException ex) {
-            JOptionPane.showMessageDialog(framePrincipal, "Erro ao carregar. " + ex);
-        }
-    }
-    
-    public void carregarTabelaAcai(JTable tabela, Class classe){
+
+    public void carregarTabelaAcai(JTable tabela, Class classe) {
         try {
             // TODO add your handling code here:
             List<TamanhoAcai> lista = getGerenciadorDominio().listar(classe);
@@ -166,8 +160,26 @@ public class GerenciadorInterfaceGrafica {
             JOptionPane.showMessageDialog(framePrincipal, "Erro ao listar açaí. " + ex);
         }
     }
-    
-    public void carregarTabelaCliente(JTable tabela, Class classe){
+
+    public void carregarTabelaAcai(JTable tabela, int tipo, String pesquisar) {
+        try {
+            // TODO add your handling code here:
+            List<TamanhoAcai> lista = getGerenciadorDominio().pesquisarTamanhoAcai(tipo, pesquisar);
+
+            //Limpar a tabela
+            ((DefaultTableModel) tabela.getModel()).setRowCount(0);
+
+            for (TamanhoAcai tamanhoAcai : lista) {
+                ((DefaultTableModel) tabela.getModel()).addRow(tamanhoAcai.toArray());
+            }
+        } catch (IllegalArgumentException ex) {
+            JOptionPane.showMessageDialog(framePrincipal, ex.getMessage());
+        } catch (HibernateException | ParseException ex) {
+            JOptionPane.showMessageDialog(framePrincipal, "Erro ao listar açaí. " + ex);
+        }
+    }
+
+    public void carregarTabelaCliente(JTable tabela, Class classe) {
         try {
             // TODO add your handling code here:
             List<Cliente> lista = getGerenciadorDominio().listar(classe);
@@ -182,15 +194,89 @@ public class GerenciadorInterfaceGrafica {
             JOptionPane.showMessageDialog(framePrincipal, "Erro ao listar cliente. " + ex);
         }
     }
-    
-    public Float obterValorAcaiPorNomeETamanho(String nome, String tamanho) {
-        Float valor = Float.parseFloat("0");
+
+    public void carregarTabelaCliente(JTable tabela, int tipo, String pesquisar) {
         try {
-            valor = gerenciadorDominio.obterValorAcaiPorNomeETamanho(nome, tamanho);
-        } catch (HibernateException ex) {
-            JOptionPane.showMessageDialog(framePrincipal, "Erro ao carregar. " + ex);
+            // TODO add your handling code here:
+            List<Cliente> lista = getGerenciadorDominio().pesquisarCliente(tipo, pesquisar);
+
+            //Limpar a tabela
+            ((DefaultTableModel) tabela.getModel()).setRowCount(0);
+
+            for (Cliente cliente : lista) {
+                ((DefaultTableModel) tabela.getModel()).addRow(cliente.toArray());
+            }
+        } catch (IllegalArgumentException ex) {
+            JOptionPane.showMessageDialog(framePrincipal, ex.getMessage());
+        } catch (HibernateException | ParseException ex) {
+            JOptionPane.showMessageDialog(framePrincipal, "Erro ao listar cliente. " + ex);
         }
-        return valor;
+    }
+
+    public void carregarTabelaPedido(JTable tabela, Cliente cliente) {
+        try {
+            // TODO add your handling code here:
+            List<Pedido> lista = getGerenciadorDominio().listarPedidoPorCliente(cliente);
+
+            //Limpar a tabela
+            ((DefaultTableModel) tabela.getModel()).setRowCount(0);
+
+            for (Pedido pedido : lista) {
+                ((DefaultTableModel) tabela.getModel()).addRow(pedido.toArray());
+            }
+        } catch (IllegalArgumentException ex) {
+            JOptionPane.showMessageDialog(framePrincipal, ex.getMessage());
+        } catch (HibernateException | ParseException ex) {
+            JOptionPane.showMessageDialog(framePrincipal, "Erro ao listar cliente. " + ex);
+        }
+    }
+
+    public void carregarTabelaItens(JTable tabela, Pedido pedido) {
+        try {
+            // TODO add your handling code here:
+            List<ItemPedido> lista = getGerenciadorDominio().listarItensPorPedido(pedido);
+
+            //Limpar a tabela
+            ((DefaultTableModel) tabela.getModel()).setRowCount(0);
+
+            for (ItemPedido itemPedido : lista) {
+                ((DefaultTableModel) tabela.getModel()).addRow(itemPedido.toArray());
+            }
+        } catch (IllegalArgumentException ex) {
+            JOptionPane.showMessageDialog(framePrincipal, ex.getMessage());
+        } catch (HibernateException | ParseException ex) {
+            JOptionPane.showMessageDialog(framePrincipal, "Erro ao listar cliente. " + ex);
+        }
+    }
+
+    public void excluirCliente(Cliente cliente) {
+        try {
+            List<Pedido> lista = gerenciadorDominio.listarPedidoPorCliente(cliente);
+            cliente.preRemove(); // Chamada ao método preRemove()
+
+            for (Pedido pedido : lista) {
+                pedido.setCliente(null);
+                gerenciadorDominio.alterarPedido(pedido);
+            }
+            gerenciadorDominio.excluir(cliente);
+        } catch (HibernateException ex) {
+            JOptionPane.showMessageDialog(framePrincipal, "Erro ao excluir. " + ex);
+        }
+    }
+
+    public void excluirTamanhoAcai(TamanhoAcai tamanhoAcai) {
+        try {
+            List<ItemPedido> lista = gerenciadorDominio.listarItemPedidoPorTamanhoAcai(tamanhoAcai);
+
+            for (ItemPedido itemPedido : lista) {
+                itemPedido.setTamanhoAcai(null); // Atualiza a referência do TamanhoAcai para nulo
+                gerenciadorDominio.alterarItemPedido(itemPedido); // Atualiza o ItemPedido no banco de dados
+            }
+
+            gerenciadorDominio.excluir(tamanhoAcai);
+        } catch (HibernateException ex) {
+            JOptionPane.showMessageDialog(framePrincipal, "Erro ao excluir. " + ex);
+        }
     }
 
     /**

@@ -4,10 +4,14 @@
  */
 package modelo;
 
+import gerenciador.FuncoesUteis;
 import java.io.Serializable;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -17,6 +21,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.PreRemove;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -42,23 +47,29 @@ public class Pedido implements Serializable {
     private char entrega;
 
     @Column(name = "valorTotal", nullable = false)
-    private float valorTotal;
+    private Double valorTotal;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "idCliente", nullable = false)
+    @JoinColumn(name = "idCliente", nullable = true)
     private Cliente cliente;
 
-    @OneToMany(mappedBy = "itemPedidoPK.pedido")
+    @OneToMany(mappedBy = "pedido")
     private List<ItemPedido> itemPedido;
 
     public Pedido() {
     }
 
-    public Pedido(Date data, char entrega, float valorTotal, Cliente cliente) {
+    public Pedido(Date data, char entrega, Double valorTotal, Cliente cliente) {
         this.data = data;
         this.entrega = entrega;
         this.valorTotal = valorTotal;
         this.cliente = cliente;
+
+        if (cliente != null) {
+            cliente.addPedido(this); // Configura o pedido para o cliente
+        }
+
+        this.itemPedido = new ArrayList<>(); // Inicializa a lista de pedidos vazia
     }
 
     public int getId() {
@@ -93,11 +104,11 @@ public class Pedido implements Serializable {
         this.entrega = entrega;
     }
 
-    public float getValorTotal() {
+    public Double getValorTotal() {
         return valorTotal;
     }
 
-    public void setValorTotal(float valorTotal) {
+    public void setValorTotal(Double valorTotal) {
         this.valorTotal = valorTotal;
     }
 
@@ -109,7 +120,31 @@ public class Pedido implements Serializable {
         this.itemPedido = itemPedido;
     }
 
+    @Override
+    public String toString() {
+        try {
+            return FuncoesUteis.dateToStr(data);
+        } catch (ParseException ex) {
+            Logger.getLogger(Pedido.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
     public Object[] toArray() throws ParseException {
-        return new Object[]{this};
+        return new Object[]{this, entrega, valorTotal};
+    }
+
+    @PreRemove
+    public void preRemove() {
+        for (ItemPedido itemPedidos : itemPedido) {
+            itemPedidos.setPedido(null);
+        }
+    }
+
+    public void addItemPedido(ItemPedido itemPedido) {
+        if (itemPedido != null) {
+            itemPedido.setPedido(this); // Configura o cliente para o pedido
+            this.itemPedido.add(itemPedido); // Adiciona o pedido à lista de pedidos do cliente
+        }
     }
 }

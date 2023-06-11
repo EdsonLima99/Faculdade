@@ -22,34 +22,7 @@ import org.hibernate.Session;
  */
 public class TamanhoAcaiDAO extends GenericDAO {
 
-    public TamanhoAcai listarUnico(Float valor) throws HibernateException {
-        Session sessao = null;
-        TamanhoAcai tamanhoAcai = null;
-
-        try {
-            sessao = ConexaoHibernate.getSessionFactory().openSession();
-            sessao.getTransaction().begin();
-
-            CriteriaBuilder builder = sessao.getCriteriaBuilder();
-            CriteriaQuery<TamanhoAcai> consulta = builder.createQuery(TamanhoAcai.class);
-            Root<TamanhoAcai> root = consulta.from(TamanhoAcai.class);
-            consulta.select(root).where(builder.equal(root.get("valor"), valor));
-
-            tamanhoAcai = sessao.createQuery(consulta).uniqueResult();
-
-            sessao.getTransaction().commit();
-            sessao.close();
-        } catch (HibernateException ex) {
-            if (sessao != null) {
-                sessao.getTransaction().rollback();
-                sessao.close();
-            }
-            throw new HibernateException(ex);
-        }
-        return tamanhoAcai;
-    }
-
-    public TamanhoAcai listarUnico(Acai acai, Tamanho tamanho) throws HibernateException {
+    public TamanhoAcai buscarTamanhoAcaiPorAcaiETamanho(Acai acai, Tamanho tamanho) throws HibernateException {
         Session sessao = null;
         TamanhoAcai tamanhoAcai = null;
 
@@ -76,7 +49,7 @@ public class TamanhoAcaiDAO extends GenericDAO {
         return tamanhoAcai;
     }
 
-    public List<TamanhoAcai> pesquisarPorValor(Float valor) throws HibernateException {
+    public List<TamanhoAcai> pesquisarPorValor(Double valor) throws HibernateException {
         Session sessao = null;
         List<TamanhoAcai> lista = null;
 
@@ -87,7 +60,40 @@ public class TamanhoAcaiDAO extends GenericDAO {
             CriteriaBuilder builder = sessao.getCriteriaBuilder();
             CriteriaQuery<TamanhoAcai> consulta = builder.createQuery(TamanhoAcai.class);
             Root<TamanhoAcai> root = consulta.from(TamanhoAcai.class);
-            consulta.select(root).where(builder.equal(root.get("valor"), valor));
+            consulta.select(root).where(builder.equal(root.get("valor"), builder.parameter(Double.class, "valor")));
+
+            lista = sessao.createQuery(consulta)
+                    .setParameter("valor", valor)
+                    .getResultList();
+
+            sessao.getTransaction().commit();
+            sessao.close();
+        } catch (HibernateException ex) {
+            if (sessao != null) {
+                sessao.getTransaction().rollback();
+                sessao.close();
+            }
+            throw new HibernateException(ex);
+        }
+        return lista;
+    }
+
+    public List<TamanhoAcai> pesquisarPorNome(String nome) throws HibernateException {
+        Session sessao = null;
+        List<TamanhoAcai> lista = null;
+
+        try {
+            sessao = ConexaoHibernate.getSessionFactory().openSession();
+            sessao.getTransaction().begin();
+
+            CriteriaBuilder builder = sessao.getCriteriaBuilder();
+            CriteriaQuery<TamanhoAcai> consulta = builder.createQuery(TamanhoAcai.class);
+            Root<TamanhoAcai> root = consulta.from(TamanhoAcai.class);
+
+            Join<TamanhoAcai, Acai> joinAcai = root.join("acai");
+            Predicate predicado = builder.like(joinAcai.get("nome"), "%" + nome + "%");
+
+            consulta.select(root).where(predicado);
 
             lista = sessao.createQuery(consulta).getResultList();
 
@@ -103,24 +109,24 @@ public class TamanhoAcaiDAO extends GenericDAO {
         return lista;
     }
 
-    public float obterValorAcaiPorNomeETamanho(String nome, String tamanho) throws HibernateException {
+    public List<TamanhoAcai> pesquisarPorTamanho(String tamanho) throws HibernateException {
         Session sessao = null;
-        float valor = 0;
+        List<TamanhoAcai> lista = null;
 
         try {
             sessao = ConexaoHibernate.getSessionFactory().openSession();
             sessao.getTransaction().begin();
 
             CriteriaBuilder builder = sessao.getCriteriaBuilder();
-            CriteriaQuery<Float> consulta = builder.createQuery(Float.class);
+            CriteriaQuery<TamanhoAcai> consulta = builder.createQuery(TamanhoAcai.class);
             Root<TamanhoAcai> root = consulta.from(TamanhoAcai.class);
-            Join<TamanhoAcai, Acai> joinAcai = root.join("acai");
-            Join<TamanhoAcai, Tamanho> joinTamanho = root.join("tamanho");
-            Predicate predicateNomeAcai = builder.equal(joinAcai.get("nome"), nome);
-            Predicate predicateTamanhoAcai = builder.equal(joinTamanho.get("tamanho"), tamanho);
-            consulta.select(root.get("valor")).where(builder.and(predicateNomeAcai, predicateTamanhoAcai));
 
-            valor = sessao.createQuery(consulta).getSingleResult();
+            Join<TamanhoAcai, Tamanho> joinTamanho = root.join("tamanho");
+            Predicate predicado = builder.like(joinTamanho.get("tamanho"), "%" + tamanho + "%");
+
+            consulta.select(root).where(predicado);
+
+            lista = sessao.createQuery(consulta).getResultList();
 
             sessao.getTransaction().commit();
             sessao.close();
@@ -131,6 +137,6 @@ public class TamanhoAcaiDAO extends GenericDAO {
             }
             throw new HibernateException(ex);
         }
-        return valor;
+        return lista;
     }
 }

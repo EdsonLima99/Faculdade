@@ -7,7 +7,6 @@ package interfaces;
 import gerenciador.FuncoesUteis;
 import gerenciador.GerenciadorInterfaceGrafica;
 import java.awt.Color;
-import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import modelo.Acai;
 import modelo.Tamanho;
@@ -215,6 +214,8 @@ public class CadastroAcai extends javax.swing.JDialog {
         limparCampos();
         acaiSelecionado = null;
         tamanhoSelecionado = null;
+        tamanhoAcaiSelecionado = null;
+        nomeBotao();
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     private void btnInserirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInserirActionPerformed
@@ -222,7 +223,7 @@ public class CadastroAcai extends javax.swing.JDialog {
         if (validarCampos()) {
             String nome = txtNome.getText();
             String tamanho = cmbTamanho.getSelectedItem().toString();
-            Float valor = Float.parseFloat(txtValor.getText());
+            Double valor = Double.parseDouble(txtValor.getText());
 
             try {
                 //INSERIR no banco
@@ -231,41 +232,51 @@ public class CadastroAcai extends javax.swing.JDialog {
 
                     JOptionPane.showMessageDialog(this, "Açaí " + id + " inserido com sucesso!");
                 } else {
-                    gerenciadorInterfaceGrafica.getGerenciadorDominio().alterarAcai(acaiSelecionado, nome);
+                    gerenciadorInterfaceGrafica.getGerenciadorDominio().alterarAcai(tamanhoAcaiSelecionado, acaiSelecionado, nome, tamanho, valor);
 
                     JOptionPane.showMessageDialog(this, "Açaí " + acaiSelecionado.getId() + " alterado com sucesso!");
                 }
                 gerenciadorInterfaceGrafica.carregarTabelaAcai(tblAcai, TamanhoAcai.class);
                 limparCampos();
+                nomeBotao();
             } catch (HibernateException ex) {
-                JOptionPane.showMessageDialog(this, "Erro ao inserir açaí.");
+                JOptionPane.showMessageDialog(this, "Erro ao inserir/alterar açaí: " + ex.getMessage());
+            } catch (RuntimeException ex) {
+                JOptionPane.showMessageDialog(this, "Erro ao inserir/alterar açaí: " + ex.getMessage());
             }
         }
     }//GEN-LAST:event_btnInserirActionPerformed
 
     private void btnPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisarActionPerformed
         // TODO add your handling code here:
-//        acaiSelecionado = gerenciadorInterfaceGrafica.abrirJanelaPesquisarAcai();
-//        tamanhoAcaiSelecionado = (TamanhoAcai) acaiSelecionado.getTamanhoAcai();
-//        tamanhoSelecionado = tamanhoAcaiSelecionado.getTamanho();
-        preencherCampos(acaiSelecionado, tamanhoAcaiSelecionado, tamanhoSelecionado);
+        limparCampos();
+        tamanhoAcaiSelecionado = gerenciadorInterfaceGrafica.abrirJanelaPesquisarAcai();
+        if (tamanhoAcaiSelecionado != null) {
+            acaiSelecionado = tamanhoAcaiSelecionado.getAcai();
+            tamanhoSelecionado = tamanhoAcaiSelecionado.getTamanho();
+            preencherCampos();
+        }
+        FuncoesUteis.limparTabela(tblAcai);
+        gerenciadorInterfaceGrafica.carregarCombo(cmbTamanho, Tamanho.class);
+        gerenciadorInterfaceGrafica.carregarTabelaAcai(tblAcai, TamanhoAcai.class);
+        nomeBotao();
     }//GEN-LAST:event_btnPesquisarActionPerformed
 
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
         // TODO add your handling code here:
+        FuncoesUteis.limparTabela(tblAcai);
         gerenciadorInterfaceGrafica.carregarCombo(cmbTamanho, Tamanho.class);
         gerenciadorInterfaceGrafica.carregarTabelaAcai(tblAcai, TamanhoAcai.class);
         nomeBotao();
     }//GEN-LAST:event_formComponentShown
 
-//    private void inserirTabela(String nome) {
-//        //Criar uma linha me branco
-//        ((DefaultTableModel) tblAcai.getModel()).addRow(new Object[1]);
-//        int linha = tblAcai.getRowCount() - 1;
-//        int coluna = 0;
-//
-//        tblAcai.setValueAt(nome, linha, coluna++);
-//    }
+    private void carregar() {
+        FuncoesUteis.limparTabela(tblAcai);
+        gerenciadorInterfaceGrafica.carregarCombo(cmbTamanho, Tamanho.class);
+        gerenciadorInterfaceGrafica.carregarTabelaAcai(tblAcai, TamanhoAcai.class);
+        nomeBotao();
+    }
+
     private boolean validarCampos() {
         String msgErro = "";
         FuncoesUteis.voltarCor(lblNome);
@@ -286,7 +297,7 @@ public class CadastroAcai extends javax.swing.JDialog {
             lblValor.setForeground(Color.red);
         } else {
             try {
-                Float.parseFloat(txtValor.getText());
+                Double.parseDouble(txtValor.getText());
             } catch (NumberFormatException e) {
                 msgErro = msgErro + "Digite um VALOR válido.\n";
                 lblValor.setForeground(Color.red);
@@ -301,12 +312,10 @@ public class CadastroAcai extends javax.swing.JDialog {
         }
     }
 
-    private void preencherCampos(Acai acaiSelecionado, TamanhoAcai tamanhoAcai, Tamanho tamanho) {
-        if (acaiSelecionado != null) {
-            txtNome.setText(acaiSelecionado.getNome());
-            cmbTamanho.setSelectedItem(tamanho.getTamanho());
-            txtValor.setText(String.valueOf(tamanhoAcai.getValor()));
-        }
+    private void preencherCampos() {
+        txtNome.setText(acaiSelecionado.getNome());
+        cmbTamanho.setSelectedItem(tamanhoSelecionado);
+        txtValor.setText(String.valueOf(tamanhoAcaiSelecionado.getValor()));
     }
 
     private void nomeBotao() {

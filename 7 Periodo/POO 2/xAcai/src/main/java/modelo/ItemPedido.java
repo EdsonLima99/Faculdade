@@ -7,8 +7,13 @@ package modelo;
 import java.io.Serializable;
 import java.text.ParseException;
 import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
@@ -19,38 +24,47 @@ import javax.persistence.Table;
 @Table(name = "ItemPedido", schema = "public")
 public class ItemPedido implements Serializable {
 
-    @EmbeddedId
-    private ItemPedidoPK itemPedidoPK;
-    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
     @Column(name = "tamanho", nullable = false)
     private int tamanho;
-    
+
     @Column(name = "morango", nullable = false)
     private int morango;
-    
+
     @Column(name = "banana", nullable = false)
     private int banana;
-    
+
     @Column(name = "cereja", nullable = false)
     private int cereja;
-    
+
     @Column(name = "leiteCondensado", nullable = false)
     private int leiteCondensado;
-    
+
     @Column(name = "coberturaMorango", nullable = false)
     private int coberturaMorango;
-    
+
     @Column(name = "coberturaChocolate", nullable = false)
     private int coberturaChocolate;
-    
+
     @Column(name = "leitePo", nullable = false)
     private int leitePo;
-    
+
     @Column(name = "pacoca", nullable = false)
     private int pacoca;
-    
+
     @Column(name = "chocoball", nullable = false)
     private int chocoball;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "idTamanhoAcai", nullable = true)
+    private TamanhoAcai tamanhoAcai;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "idPedido", nullable = true)
+    private Pedido pedido;
 
     public ItemPedido() {
     }
@@ -66,23 +80,40 @@ public class ItemPedido implements Serializable {
         this.leitePo = leitePo;
         this.pacoca = pacoca;
         this.chocoball = chocoball;
-        this.itemPedidoPK = new ItemPedidoPK(tamanhoAcai, pedido);
+        this.tamanhoAcai = tamanhoAcai;
+        this.pedido = pedido;
+
+        if (pedido != null) {
+            pedido.addItemPedido(this); // Configura o pedido para o cliente
+        }
+
+        if (tamanhoAcai != null) {
+            tamanhoAcai.addItemPedido(this); // Configura o pedido para o cliente
+        }
     }
 
-    public Pedido getPedido() {
-        return itemPedidoPK.getPedido();
+    public int getId() {
+        return id;
     }
 
-    public void setPedido(Pedido pedido) {
-        this.itemPedidoPK.setPedido(pedido);
+    public void setId(int id) {
+        this.id = id;
     }
 
     public TamanhoAcai getTamanhoAcai() {
-        return itemPedidoPK.getTamanhoAcai();
+        return tamanhoAcai;
     }
 
-    public void setAcai(TamanhoAcai tamanhoAcai) {
-        this.itemPedidoPK.setTamanhoAcai(tamanhoAcai);
+    public void setTamanhoAcai(TamanhoAcai tamanhoAcai) {
+        this.tamanhoAcai = tamanhoAcai;
+    }
+
+    public Pedido getPedido() {
+        return pedido;
+    }
+
+    public void setPedido(Pedido pedido) {
+        this.pedido = pedido;
     }
 
     public int getTamanho() {
@@ -165,11 +196,31 @@ public class ItemPedido implements Serializable {
         this.chocoball = chocoball;
     }
 
-//    @Override
-//    public String toString() {
-//        return nome;
-//    }
+    @Override
+    public String toString() {
+        if (getTamanhoAcai() != null) {
+            return getTamanhoAcai().getAcai().getNome();
+        } else {
+            return "";
+        }
+    }
+
     public Object[] toArray() throws ParseException {
-        return new Object[]{this};
+        String tamanhoAcai = (getTamanhoAcai() != null) ? getTamanhoAcai().getTamanho().getTamanho() : "";
+        double valor = (getTamanhoAcai() != null) ? getTamanhoAcai().getValor() : 0.0;
+
+        return new Object[]{this, tamanho, tamanhoAcai, toString(morango), toString(banana),
+            toString(cereja), toString(leiteCondensado), toString(coberturaMorango), toString(coberturaMorango),
+            toString(leitePo), toString(pacoca), toString(chocoball), valor};
+    }
+
+    private String toString(int valor) {
+        String texto;
+        if (valor == 1) {
+            texto = "Sim";
+        } else {
+            texto = "Não";
+        }
+        return texto;
     }
 }

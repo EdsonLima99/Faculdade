@@ -17,6 +17,8 @@ import java.util.Date;
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageOutputStream;
 import javax.swing.Icon;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -129,5 +131,19 @@ public class FuncoesUteis {
         DateFormat dtForm = new SimpleDateFormat("dd/MM/yyyy");
         dtForm.setLenient(false);
         return dtForm.format(dt);
+    }
+
+    public static int inteiro(String texto) {
+        int inteiro = 0;
+        if (texto.equals("Sim")) {
+            inteiro = 1;
+        } else {
+            inteiro = 0;
+        }
+        return inteiro;
+    }
+
+    public static void limparTabela(JTable tabela) {
+        ((DefaultTableModel) tabela.getModel()).setRowCount(0);
     }
 }
