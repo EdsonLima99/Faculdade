@@ -1,0 +1,129 @@
+/* DUPLA: CLARISSE DINIZ E EDSON LIMA*/
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+  background-color: #f5f5f5;
+}
+
+h1 {
+  text-align: center;
+  font-style: initial; 
+  color:blueviolet;
+}
+
+form {
+  margin-bottom: 20px;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+label {
+  display: block;
+  margin-top: 10px;
+  font-weight: bold;
+  color: #555;
+}
+
+input[type="text"],
+input[type="tel"],
+input[type="email"] {
+  width: 250px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  font-weight: bold;
+  background-color: blueviolet;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 14px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+th,
+td {
+  padding: 10px;
+  text-align: left;
+}
+
+th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+  color:blueviolet; 
+  font-size: 17px;
+}
+
+tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.acao {
+  white-space: nowrap;
+}
+
+.acao button {
+  margin-right: 5px;
+  padding: 8px 12px;
+  font-size: 14px;
+  border-radius: 5px;
+  margin-right: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button.botaoEditar:hover,
+.acao button.botaoSalvar:hover {
+  background-color: blue;
+}
+
+button.botaoDeletar:hover,
+.acao button.botaoCancelar:hover {
+  background-color: red;
+}
+
+.acao button,
+.acao input[type="text"],
+.acao input[type="email"] {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.acao input[type="text"],
+.acao input[type="email"] {
+  width: 180px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.acao input[type="text"]:focus,
+.acao input[type="email"]:focus {
+  outline: none;
+  border-color: #4caf50;
+  box-shadow: 0 0 5px #4caf50;
+}
+
+.acao input[type="text"]:hover,
+.acao input[type="email"]:hover {
+  border-color: #999;
+}

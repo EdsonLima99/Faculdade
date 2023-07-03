@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Agenda de Contatos</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+    <h1>Agenda de Contatos</h1>
+
+    <form id="contact-form">
+        <label for="name">Nome:</label>
+        <input type="text" id="name" required>
+
+        <label for="phone">Telefone:</label>
+        <input type="text" id="phone" required>
+
+        <label for="email">E-mail:</label>
+        <input type="email" id="email" required>
+
+        <button type="submit">Inserir</button>
+    </form>
+
+    <table id="contact-table">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Telefone</th>
+                <th>E-mail</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
