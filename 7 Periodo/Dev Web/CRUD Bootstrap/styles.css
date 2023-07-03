@@ -1,0 +1,23 @@
+.navbar {
+    margin-bottom: 20px;
+}
+
+.jumbotron {
+    text-align: center;
+}
+
+.table {
+    margin-bottom: 20px;
+}
+
+.table .btn {
+    margin-right: 5px;
+}
+
+.modal-body {
+    text-align: center;
+}
+
+.form-group label {
+    font-weight: bold;
+}
