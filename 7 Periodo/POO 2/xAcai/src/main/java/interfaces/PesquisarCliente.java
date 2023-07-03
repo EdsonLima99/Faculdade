@@ -2,6 +2,7 @@ package interfaces;
 
 import gerenciador.FuncoesUteis;
 import gerenciador.GerenciadorInterfaceGrafica;
+import java.util.List;
 import javax.swing.JOptionPane;
 import modelo.Cliente;
 import org.hibernate.HibernateException;
@@ -51,6 +52,7 @@ public class PesquisarCliente extends javax.swing.JDialog {
         btnExcluir = new javax.swing.JButton();
         btnSelecionar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
+        btnRelatorio = new javax.swing.JButton();
         cmbTipo = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -111,18 +113,27 @@ public class PesquisarCliente extends javax.swing.JDialog {
             }
         });
 
+        btnRelatorio.setText("Relatório");
+        btnRelatorio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRelatorioActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(27, 27, 27)
+                .addGap(21, 21, 21)
                 .addComponent(btnSelecionar)
-                .addGap(37, 37, 37)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnExcluir)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnCancelar)
-                .addGap(32, 32, 32))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnRelatorio)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -131,8 +142,9 @@ public class PesquisarCliente extends javax.swing.JDialog {
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSelecionar)
                     .addComponent(btnExcluir)
-                    .addComponent(btnCancelar))
-                .addContainerGap(19, Short.MAX_VALUE))
+                    .addComponent(btnCancelar)
+                    .addComponent(btnRelatorio))
+                .addContainerGap(34, Short.MAX_VALUE))
         );
 
         cmbTipo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Nome", "Bairro", "Cidade", "Sexo" }));
@@ -222,10 +234,24 @@ public class PesquisarCliente extends javax.swing.JDialog {
         FuncoesUteis.limparTabela(tblCliente);
     }//GEN-LAST:event_formComponentShown
 
+    private void btnRelatorioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRelatorioActionPerformed
+        // TODO add your handling code here:
+        try {
+            // TODO add your handling code here:
+            List<Cliente> lista = gerenciadorInterfaceGrafica.getGerenciadorDominio().pesquisarCliente(cmbTipo.getSelectedIndex(), txtPesquisar.getText());
+
+            gerenciadorInterfaceGrafica.getGerenciadorRelatorios().relComLista(lista, "RP_CLIENTES.jasper");
+            //gerenciadorInterfaceGrafica.getGerenciadorRelatorios().relComConexao();
+        } catch (HibernateException ex) {
+            JOptionPane.showMessageDialog(this, "Erro ao listar cliente. " + ex);
+        }
+    }//GEN-LAST:event_btnRelatorioActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnExcluir;
     private javax.swing.JButton btnPesquisar;
+    private javax.swing.JButton btnRelatorio;
     private javax.swing.JButton btnSelecionar;
     private javax.swing.JComboBox<String> cmbTipo;
     private javax.swing.JPanel jPanel2;

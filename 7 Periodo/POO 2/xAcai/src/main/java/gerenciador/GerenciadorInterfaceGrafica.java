@@ -48,6 +48,7 @@ public class GerenciadorInterfaceGrafica {
     private ConsultarPedido consultarPedido;
 
     GerenciadorDominio gerenciadorDominio;
+    GerenciadorRelatorios gerenciadorRelatorios;
 
     public GerenciadorInterfaceGrafica() {
         framePrincipal = null;
@@ -61,6 +62,7 @@ public class GerenciadorInterfaceGrafica {
 
         try {
             gerenciadorDominio = new GerenciadorDominio();
+            gerenciadorRelatorios = new GerenciadorRelatorios();
         } catch (HibernateException ex) {
             JOptionPane.showMessageDialog(framePrincipal, ex);
             System.exit(1);
@@ -69,6 +71,10 @@ public class GerenciadorInterfaceGrafica {
 
     public GerenciadorDominio getGerenciadorDominio() {
         return gerenciadorDominio;
+    }
+    
+    public GerenciadorRelatorios getGerenciadorRelatorios() {
+        return gerenciadorRelatorios;
     }
 
     // ABRIR JDIALOG

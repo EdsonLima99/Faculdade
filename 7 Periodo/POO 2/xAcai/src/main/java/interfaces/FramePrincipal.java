@@ -5,6 +5,12 @@
 package interfaces;
 
 import gerenciador.GerenciadorInterfaceGrafica;
+import java.text.ParseException;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import modelo.Cliente;
+import org.hibernate.HibernateException;
 
 /**
  *
